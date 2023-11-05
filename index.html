@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <!-- MIT License
 
-    Copyright (c) 2022 Mads Bendix Horn
+    Copyright (c) 2023 Mads Bendix Horn
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@
     }
     </script>
 
-    <script src="Coordinatrix.js" defer></script>
+    <script src="coordinatrix.js" defer></script>
 
     <link rel="manifest" href="manifest.json">
   </head>
@@ -61,7 +61,7 @@
         <h1> Coordinatrix </h1>
     </div>
 
-    <div id="Frontpage" >
+    <div id="Frontpage" hidden>
         <div id='frontpageContainer' class="frontpageContainer">
           <div id='frontpageDiv'>
             <h3>
@@ -100,19 +100,19 @@
         </div>
     </div>
     
-    <div id="dateContainer" hidden>
+    <div id="dateContainer">
         <h3> Dronninglund Brætspilsklub </h3>
         <button id="inviteOthers" type="button" class="actionButton">Inviter andre til denne begivenhed</button>
         <br>
         <p> Foreslåede datoer (Klik dato for at se tilmeldte) </p>
-        <div id="datoer">
-            <div class="dato"> 
+        <div id="dates">
+            <div id="1234" class="suggestedDate"> 
                 <button type="button" class="date"> Lør 9/11 kl 13 </button>
                 <button type="button" class="red">Kan ikke</button>
                 <button type="button" class="yellow">Kan måske</button>
                 <button type="button" class="green">Kan godt</button>
             </div>
-            <div class="dato"> 
+            <div class="suggestedDate"> 
                 <button type="button" class="date"> Søn 10/11 kl 13 </button>
                 <button type="button" class="red">Kan ikke</button>
                 <button type="button" class="yellow">Kan måske</button>
