@@ -26,13 +26,13 @@ SOFTWARE. */
   }
 
 .red {
-    background-color: red;
+    background-color: rgba(255, 0, 0, 0.2);
 }
 
-.yellow {
+/* .yellow {
     background-color: yellow;
-}
+} */
 
 .green {
-    background-color: green;
+    background-color: rgba(0, 255, 0, 0.2);
 }

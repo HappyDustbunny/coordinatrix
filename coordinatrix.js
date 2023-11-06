@@ -46,10 +46,10 @@ class Event {
 
 
 class Datesuggestion {
-    constructor(date, location, cakeProvider) {
+    constructor(date, location, participate) {
         this.date = date;
         this.location = location;
-        this.cakeProvider = cakeProvider;
+        this.participate = 'No';
         this.uniqueID = this.giveAUniqueId();
     }
 
@@ -97,24 +97,28 @@ function fillInDates() {
     let textNode = document.createTextNode(dateText);
     newButton.appendChild(textNode);
     newNode.appendChild(newButton);
-
-    let yesButton = document.createElement('button');
-    yesButton.classList.add('red');
-    let yesText = document.createTextNode('Kan ikke');
-    yesButton.appendChild(yesText);
-    newNode.appendChild(yesButton);
     
-    let maybeButton = document.createElement('button');
-    maybeButton.classList.add('yellow');
-    let maybeText = document.createTextNode('Kan måske');
-    maybeButton.appendChild(maybeText);
-    newNode.appendChild(maybeButton);
-
     let noButton = document.createElement('button');
-    noButton.classList.add('green');
-    let noText = document.createTextNode('Kan godt');
-    noButton.appendChild(noText);
+    noButton.setAttribute('id', 'n' + dateSuggestion.uniqueID);
+    noButton.classList.add('red');
+    noButton.classList.add(dateSuggestion.uniqueID);
+    let yesText = document.createTextNode('Kan ikke');
+    noButton.appendChild(yesText);
     newNode.appendChild(noButton);
+    
+    // let maybeButton = document.createElement('button');
+    // maybeButton.classList.add('yellow');
+    // let maybeText = document.createTextNode('Kan måske');
+    // maybeButton.appendChild(maybeText);
+    // newNode.appendChild(maybeButton);
+    
+    let yesButton = document.createElement('button');
+    yesButton.setAttribute('id', 'y' + dateSuggestion.uniqueID);
+    yesButton.classList.add('green');
+    yesButton.classList.add(dateSuggestion.uniqueID);
+    let noText = document.createTextNode('Kan godt');
+    yesButton.appendChild(noText);
+    newNode.appendChild(yesButton);
 
     document.getElementById('dates').insertAdjacentElement('beforeend', newNode);
   }
@@ -128,6 +132,30 @@ function inviteOthers() {
 function dateHasBeenClicked(event) {
     let myDateID = event.target.id;
     console.log(myDateID);
+    let firstCharInID = myDateID.substring(0, 1);
+    if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
+      for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+        if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
+          dateSuggestion.participate = 'Yes';
+          document.getElementById(myDateID).style.backgroundColor = 'green';
+          document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+          console.log('Yes');
+        } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
+          dateSuggestion.participate = 'No';
+          document.getElementById(myDateID).style.backgroundColor = 'red';
+          document.getElementById('y' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+          console.log('No');
+    
+        }
+      }
+    }  else {
+      showParticipants();
+    }
+}
+
+
+function showParticipants() {
+  console.log('Show participants');
 }
 
 
