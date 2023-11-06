@@ -31,11 +31,11 @@
 
     <title> Coordinatrix </title>
 
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="icons" type="image/png" href="favicons/maskable_192.png" sizes="192x192"> <!-- The manifest may ask for 'icons' instead of 'icon' -->
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <!-- <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icons" type="image/png" href="favicons/maskable_192.png" sizes="192x192"> --> <!-- The manifest may ask for 'icons' instead of 'icon' -->
+    <!-- <link rel="icon" href="icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="apple-touch-startup-image" href="apple-touch-startup-image.png">
+    <link rel="apple-touch-startup-image" href="apple-touch-startup-image.png"> -->
 
     <link rel="stylesheet" href="coordinatrix.css">
 
@@ -56,7 +56,7 @@
     <link rel="manifest" href="manifest.json">
   </head>
 
-  <body>
+  <body onload="setUpFunc()">
     <div class="headContainer">
         <h1> Coordinatrix </h1>
     </div>
@@ -106,18 +106,7 @@
         <br>
         <p> Foreslåede datoer (Klik dato for at se tilmeldte) </p>
         <div id="dates">
-            <div id="1234" class="suggestedDate"> 
-                <button type="button" class="date"> Lør 9/11 kl 13 </button>
-                <button type="button" class="red">Kan ikke</button>
-                <button type="button" class="yellow">Kan måske</button>
-                <button type="button" class="green">Kan godt</button>
-            </div>
-            <div class="suggestedDate"> 
-                <button type="button" class="date"> Søn 10/11 kl 13 </button>
-                <button type="button" class="red">Kan ikke</button>
-                <button type="button" class="yellow">Kan måske</button>
-                <button type="button" class="green">Kan godt</button>
-            </div>
+            <!-- Suggested dates are shown here -->
         </div>
         <br>
         <button id="suggestDate" type="button" class="actionButton">Foreslå dato</button>

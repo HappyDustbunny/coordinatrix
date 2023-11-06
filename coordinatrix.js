@@ -22,49 +22,102 @@
 
 let userID = '';
 let eventID = '';
-let uniqueIdList = []; // Used by the class Event only
-let eventList = [];
+let uniqueIdList = []; // Used by the class DateSuggestion only
+let suggestedDateList = [];
+
+let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
+let debugVar1;
 
 
 document.getElementById('inviteOthers').addEventListener('click', inviteOthers);
 document.getElementById('dates').addEventListener('click', function(event) { dateHasBeenClicked(event); }, true);
 document.getElementById('suggestDate').addEventListener('click', suggestDate);
-document.getElementById('newEvent').addEventListener('click', newEvent);
+document.getElementById('newEvent').addEventListener('click', newDateSuggestion);
 
 
 class Event {
-    constructor(event, date, location, cakeProvider) {
-        this.event;
-        this.date;
-        this.location;
-        this.cakeProvider;
-        this.uniqueID = this.giveAUniqueID();
+  constructor(eventID, name, participants, suggestedDateList) {
+    this.eventID = eventID;
+    this.name = name;
+    this.participants = participants;
+    this.suggestedDateList = suggestedDateList;
+  }
+}
+
+
+class Datesuggestion {
+    constructor(date, location, cakeProvider) {
+        this.date = date;
+        this.location = location;
+        this.cakeProvider = cakeProvider;
+        this.uniqueID = this.giveAUniqueId();
     }
 
     giveAUniqueId() {
-        let tryAgain = false;
-        let uniqueId = 0;
-        do {
-          tryAgain = false;
-          uniqueId = Math.floor(Math.random() * 10000);
-          for (const [index, id] of uniqueIdList.entries()) {
-            if (uniqueId.toString() === id.toString()) {
-              tryAgain = true;
-              break;
-            }
+      let tryAgain = false;
+      let uniqueId = 0;
+      do {
+        tryAgain = false;
+        uniqueId = Math.floor(Math.random() * 100000);
+        for (const [index, id] of uniqueIdList.entries()) {
+          if (uniqueId.toString() === id.toString()) {
+            tryAgain = true;
+            break;
           }
         }
-        while (tryAgain);
-    
-        uniqueIdList.push(uniqueId);
-        return uniqueId;
       }
+      while (tryAgain);
+  
+      uniqueIdList.push(uniqueId);
+      return uniqueId;
+    }
 }
-
 
 
 // Runs when the page is loaded:
 function setUpFunc() {
+  debugExample();
+
+  fillInDates();
+}
+
+
+function fillInDates() {
+  for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+    let newNode = document.createElement('div');
+    newNode.classList.add('suggestedDate')
+
+    let newButton = document.createElement('button');
+    newButton.setAttribute('id', dateSuggestion.uniqueID);
+    newButton.classList.add('date')
+    
+    let thisDate = dateSuggestion.date;
+    let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+    ' kl ' + thisDate.getHours();
+    let textNode = document.createTextNode(dateText);
+    newButton.appendChild(textNode);
+    newNode.appendChild(newButton);
+
+    let yesButton = document.createElement('button');
+    yesButton.classList.add('red');
+    let yesText = document.createTextNode('Kan ikke');
+    yesButton.appendChild(yesText);
+    newNode.appendChild(yesButton);
+    
+    let maybeButton = document.createElement('button');
+    maybeButton.classList.add('yellow');
+    let maybeText = document.createTextNode('Kan måske');
+    maybeButton.appendChild(maybeText);
+    newNode.appendChild(maybeButton);
+
+    let noButton = document.createElement('button');
+    noButton.classList.add('green');
+    let noText = document.createTextNode('Kan godt');
+    noButton.appendChild(noText);
+    newNode.appendChild(noButton);
+
+    document.getElementById('dates').insertAdjacentElement('beforeend', newNode);
+  }
 }
 
 
@@ -82,5 +135,13 @@ function suggestDate() {
 }
 
 
-function newEvent() {
+function newDateSuggestion() {
+}
+
+// ****************  Debugging tools  ***************
+
+function debugExample() {
+  suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 10, 13, 0), 'Bøgevangen 42', 'Kamilla'));
+  suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 11, 13, 0), 'Bøgevangen 42', 'Kurt'));
+  debugVar1 = new Event('SXGYDS', 'Dronninglund Brætspilsklub', ['Karen', 'Kurt', 'Kamilla', 'Knud'], suggestedDateList);
 }
