@@ -102,7 +102,7 @@ function fillInDates() {
     noButton.setAttribute('id', 'n' + dateSuggestion.uniqueID);
     noButton.classList.add('red');
     noButton.classList.add(dateSuggestion.uniqueID);
-    let yesText = document.createTextNode('Kan ikke');
+    let yesText = document.createTextNode('Deltager ikke');
     noButton.appendChild(yesText);
     newNode.appendChild(noButton);
     
@@ -116,7 +116,7 @@ function fillInDates() {
     yesButton.setAttribute('id', 'y' + dateSuggestion.uniqueID);
     yesButton.classList.add('green');
     yesButton.classList.add(dateSuggestion.uniqueID);
-    let noText = document.createTextNode('Kan godt');
+    let noText = document.createTextNode('Deltager');
     yesButton.appendChild(noText);
     newNode.appendChild(yesButton);
 
@@ -145,7 +145,6 @@ function dateHasBeenClicked(event) {
           document.getElementById(myDateID).style.backgroundColor = 'red';
           document.getElementById('y' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
           console.log('No');
-    
         }
       }
     }  else {
