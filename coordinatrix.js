@@ -22,6 +22,8 @@
 
 let userID = '';
 let eventID = '';
+let myID = '';
+let eventsIFollow = [];
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let suggestedDateList = [];
 
@@ -36,9 +38,9 @@ document.getElementById('newEvent').addEventListener('click', newDateSuggestion)
 
 
 class Event {
-  constructor(eventID, name, participants, suggestedDateList) {
+  constructor(eventID, eventName, participants, suggestedDateList) {
     this.eventID = eventID;
-    this.name = name;
+    this.eventName = eventName;
     this.participants = participants;
     this.suggestedDateList = suggestedDateList;
   }
@@ -46,10 +48,10 @@ class Event {
 
 
 class Datesuggestion {
-    constructor(date, location, participate) {
+    constructor(date, location, participants) {
         this.date = date;
         this.location = location;
-        this.participate = 'No';
+        this.participants = participants;
         this.uniqueID = this.giveAUniqueId();
     }
 
@@ -78,7 +80,19 @@ class Datesuggestion {
 function setUpFunc() {
   debugExample();
 
+  checkLocalStorageAndChooseWelcome();
+
+  getMyEventsFromServer();
+
   fillInDates();
+}
+
+
+function checkLocalStorageAndChooseWelcome() {
+  if (localStorage.eventsIFollow) {
+    eventsIFollow = localStorage.eventsIFollow;
+    myID = localStorage.myID;
+  }
 }
 
 
@@ -136,12 +150,12 @@ function dateHasBeenClicked(event) {
     if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
       for (const [index, dateSuggestion] of suggestedDateList.entries()) {
         if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
-          dateSuggestion.participate = 'Yes';
+          dateSuggestion.participants = 'Yes';
           document.getElementById(myDateID).style.backgroundColor = 'green';
           document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
-          dateSuggestion.participate = 'No';
+          dateSuggestion.participants = 'No';
           document.getElementById(myDateID).style.backgroundColor = 'red';
           document.getElementById('y' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
           console.log('No');
