@@ -62,7 +62,7 @@
         <h1> Coordinatrix </h1>
     </div>
 
-    <div id="Frontpage">
+    <div id="frontPage">
         <div id='frontpageContainer' class="frontpageContainer">
           <div id='frontpageDiv'>
             <h3> Velkommen til Coordinatrix </h3>
@@ -113,7 +113,7 @@
     </div>
     
     <div id="dateContainer" hidden>
-        <h3> Dronninglund Brætspilsklub </h3>
+        <h3 id="dateHeader"> </h3>
         <button id="inviteOthers" type="button" class="actionButton">Inviter andre til denne begivenhed</button>
         <br>
         <p> Foreslåede datoer (Klik dato for at se tilmeldte) </p>
@@ -121,7 +121,19 @@
             <!-- Suggested dates are shown here -->
         </div>
         <br>
-        <button id="suggestDate" type="button" class="actionButton">Foreslå dato</button>
-        <button id="makeYourOwnEvent" type="button" class="actionButton">Foreslå dato</button>
+        <button id="suggestDate" type="button" class="actionButton"> Foreslå dato </button>
+        <button id="makeYourOwnEvent" type="button" class="actionButton"> Lav ny event </button>
+      </div>
+      
+      <div id="newEventContainer" hidden>
+        <h3> Opret ny begivenhed </h3>
+        <div>
+          <p> Giv begivenden et navn </p>
+          <input id="eventName" type="text">
+        </div>
+        <button id="suggestEventDate" type="button" class="actionButton"> Foreslå dato </button>
+        <br>
+        <button id="makeEvent"> Opret begivend </button>
     </div>
+
   </body>

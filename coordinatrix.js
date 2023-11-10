@@ -28,7 +28,7 @@ let uniqueIdList = []; // Used by the class DateSuggestion only
 let suggestedDateList = [];
 
 let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
-let debugVar1;
+let currentEvent;
 
 
 document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
@@ -41,8 +41,8 @@ document.getElementById('dates').addEventListener('click', function(event) { dat
 
 document.getElementById('suggestDate').addEventListener('click', suggestDate);
 
-document.getElementById('newEvent').addEventListener('click', newDateSuggestion);
-document.getElementById('makeYourOwnEvent').addEventListener('click', newDateSuggestion);
+document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
+document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
 
 
 class Event {
@@ -91,28 +91,33 @@ function setUpFunc() {
 
 
 function checkLocalStorageAndChooseWelcome() {
-  if (localStorage.eventsIFollow) {
+  if (location.hash || localStorage.eventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
     eventsIFollow = localStorage.eventsIFollow;
     myID = localStorage.myID;
     
-    document.getElementById('Frontpage').hidden = true;
+    document.getElementById('frontPage').hidden = true;
     document.getElementById('dateContainer').hidden = false;
     
-    getMyEventsFromServer();
+    getMyEventsFromServer(location.hash);
     
     fillInDates();
   } else {
-    document.getElementById('Frontpage').hidden = false;
+    document.getElementById('frontPage').hidden = false;
     document.getElementById('dateContainer').hidden = true;
   }
 }
 
 
-function getMyEventsFromServer() {
-  debugExample();  // ToDo: Fix real function
+function getMyEventsFromServer(hash) {
+  debugExample(hash);  // ToDo: Fix real function
 }
 
 function fillInDates() {
+  // Insert eventname as header
+  let headerText = document.createTextNode(currentEvent.eventName);
+  document.getElementById('dateHeader').appendChild(headerText);
+  
+  // Fill in dates and participants
   for (const [index, dateSuggestion] of suggestedDateList.entries()) {
     let newNode = document.createElement('div');
     newNode.classList.add('suggestedDate')
@@ -150,7 +155,12 @@ function fillInDates() {
     yesButton.appendChild(noText);
     newNode.appendChild(yesButton);
 
+    let participantList = document.createElement('div');
+    participantList.classList.add('participantList');
+    participantList.setAttribute('id', 'part' + dateSuggestion.uniqueID);
+
     document.getElementById('dates').insertAdjacentElement('beforeend', newNode);
+    document.getElementById('dates').insertAdjacentElement('beforeend', participantList);
   }
 }
 
@@ -184,13 +194,33 @@ function dateHasBeenClicked(event) {
         }
       }
     }  else {
-      showParticipants();
+      showParticipants(myDateID);
     }
 }
 
 
-function showParticipants() {
-  console.log('Show participants');
+function showParticipants(myDateID) {
+  if (document.getElementById('part' + myDateID).hasChildNodes()) {
+    let element = document.getElementById('part' + myDateID);
+    while (element.hasChildNodes()) {
+      element.removeChild(element.firstChild);
+    }
+  } else {
+    for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+      if (dateSuggestion.uniqueID === Number(myDateID)) {
+        let myParticipantList = dateSuggestion.participants;
+        for (const [index, participant] of myParticipantList.entries()) {
+          let newNode = document.createElement('p');
+          let thisText = document.createTextNode(participant);
+          newNode.appendChild(thisText);
+        
+          document.getElementById('part' + myDateID).insertAdjacentElement('beforeend', newNode);
+        }
+        console.log('Show participants');
+        break;
+      }
+    }
+  }
 }
 
 
@@ -198,13 +228,39 @@ function suggestDate() {
 }
 
 
-function newDateSuggestion() {
+function newEventSuggestion() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
+  makeHash();
+  readName();
+  suggestDate();
+  sendToServerAndUpdateLocalStorage();
 }
+
+function makeHash() {
+}
+
+
+function readName() {
+}
+
+
+function suggestDate() {
+}
+
+
+function sendToServerAndUpdateLocalStorage() {
+}
+
 
 // ****************  Debugging tools  ***************
 
-function debugExample() {
-  suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 10, 13, 0), 'Bøgevangen 42', 'Kamilla'));
-  suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 11, 13, 0), 'Bøgevangen 42', 'Kurt'));
-  debugVar1 = new Event('SXGYDS', 'Dronninglund Brætspilsklub', ['Karen', 'Kurt', 'Kamilla', 'Knud'], suggestedDateList);
+function debugExample(hash) {
+  if (hash === '#XYZ') {
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 10, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Kamilla', 'Knud']));
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 11, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Knud']));
+    currentEvent = new Event('XYZ', 'Dronninglund Brætspilsklub', ['Karen', 'Kurt', 'Kamilla', 'Knud'], suggestedDateList);
+  } else {
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 8, 14, 0), 'Skovbrynet', ['Ada', 'Adam', 'Amanda']));
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 11, 14, 0), 'Skovbrynet', ['Adam', 'Amanda']));
+    currentEvent = new Event('abc', 'Dronninglund Nye Brætspilsklub', ['Ada', 'Adam', 'Amanda'], suggestedDateList);
+  }
 }
