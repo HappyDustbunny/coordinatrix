@@ -36,3 +36,13 @@ SOFTWARE. */
 .green {
     background-color: rgba(0, 255, 0, 0.2);
 }
+
+.deleteButton {
+    border-radius: 15px;
+    background-color: red;
+    height: 20px;
+    padding-top: 0px;
+    font-size: 1.1em;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+}

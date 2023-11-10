@@ -39,7 +39,11 @@ document.getElementById('inviteOthers').addEventListener('click', inviteOthers);
 
 document.getElementById('dates').addEventListener('click', function(event) { dateHasBeenClicked(event); }, true);
 
-document.getElementById('suggestDate').addEventListener('click', suggestDate);
+// document.getElementById('suggestDate').addEventListener('click', suggestDate);
+document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
+document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
+// document.getElementById('datePicker').addEventListener('change', suggestDate)
+// document.getElementById('timePicker').addEventListener('change', suggestDate)
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
 document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
@@ -56,12 +60,12 @@ class Event {
 
 
 class Datesuggestion {
-    constructor(date, location, participants) {
+  constructor(date, location, participants) {
         this.date = date;
         this.location = location;
         this.participants = participants;
         this.uniqueID = this.giveAUniqueId();
-    }
+      }
 
     giveAUniqueId() {
       let tryAgain = false;
@@ -77,16 +81,16 @@ class Datesuggestion {
         }
       }
       while (tryAgain);
-  
+      
       uniqueIdList.push(uniqueId);
       return uniqueId;
     }
-}
+  }
 
-
-// Runs when the page is loaded:
-function setUpFunc() {
-  checkLocalStorageAndChooseWelcome();
+  
+  // Runs when the page is loaded:
+  function setUpFunc() {
+    checkLocalStorageAndChooseWelcome();
 }
 
 
@@ -120,11 +124,11 @@ function fillInDates() {
   // Fill in dates and participants
   for (const [index, dateSuggestion] of suggestedDateList.entries()) {
     let newNode = document.createElement('div');
-    newNode.classList.add('suggestedDate')
-
+    newNode.classList.add('suggestedDate');
+    
     let newButton = document.createElement('button');
     newButton.setAttribute('id', dateSuggestion.uniqueID);
-    newButton.classList.add('date')
+    newButton.classList.add('date');
     
     let thisDate = dateSuggestion.date;
     let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
@@ -154,11 +158,11 @@ function fillInDates() {
     let noText = document.createTextNode('Deltager');
     yesButton.appendChild(noText);
     newNode.appendChild(yesButton);
-
+    
     let participantList = document.createElement('div');
     participantList.classList.add('participantList');
     participantList.setAttribute('id', 'part' + dateSuggestion.uniqueID);
-
+    
     document.getElementById('dates').insertAdjacentElement('beforeend', newNode);
     document.getElementById('dates').insertAdjacentElement('beforeend', participantList);
   }
@@ -171,19 +175,19 @@ function inviteOthers() {
 
 function unfold(event) {  // Toggle button visibility
   let buttonID = event.target.id;
-
+  
   document.getElementById(buttonID + 'Text').hidden = !(document.getElementById(buttonID + 'Text').hidden);
 }
 
 function dateHasBeenClicked(event) {
-    let myDateID = event.target.id;
-    console.log(myDateID);
-    let firstCharInID = myDateID.substring(0, 1);
-    if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
-      for (const [index, dateSuggestion] of suggestedDateList.entries()) {
-        if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
-          dateSuggestion.participants = 'Yes';
-          document.getElementById(myDateID).style.backgroundColor = 'green';
+  let myDateID = event.target.id;
+  console.log(myDateID);
+  let firstCharInID = myDateID.substring(0, 1);
+  if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
+    for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+  if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
+    dateSuggestion.participants = 'Yes';
+    document.getElementById(myDateID).style.backgroundColor = 'green';
           document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
@@ -196,24 +200,24 @@ function dateHasBeenClicked(event) {
     }  else {
       showParticipants(myDateID);
     }
-}
-
-
-function showParticipants(myDateID) {
-  if (document.getElementById('part' + myDateID).hasChildNodes()) {
-    let element = document.getElementById('part' + myDateID);
-    while (element.hasChildNodes()) {
-      element.removeChild(element.firstChild);
-    }
-  } else {
-    for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+  }
+  
+  
+  function showParticipants(myDateID) {
+    if (document.getElementById('part' + myDateID).hasChildNodes()) {
+      let element = document.getElementById('part' + myDateID);
+      while (element.hasChildNodes()) {
+        element.removeChild(element.firstChild);
+      }
+    } else {
+      for (const [index, dateSuggestion] of suggestedDateList.entries()) {
       if (dateSuggestion.uniqueID === Number(myDateID)) {
         let myParticipantList = dateSuggestion.participants;
         for (const [index, participant] of myParticipantList.entries()) {
           let newNode = document.createElement('p');
           let thisText = document.createTextNode(participant);
           newNode.appendChild(thisText);
-        
+          
           document.getElementById('part' + myDateID).insertAdjacentElement('beforeend', newNode);
         }
         console.log('Show participants');
@@ -224,14 +228,13 @@ function showParticipants(myDateID) {
 }
 
 
-function suggestDate() {
-}
-
 
 function newEventSuggestion() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
+  document.getElementById('frontPage').hidden = true;
+  document.getElementById('newEventContainer').hidden = false;
+  
   makeHash();
   readName();
-  suggestDate();
   sendToServerAndUpdateLocalStorage();
 }
 
@@ -244,10 +247,51 @@ function readName() {
 
 
 function suggestDate() {
+  dateValue = document.getElementById('datePicker').value;
+  if (dateValue) {
+    thisID = new Date().getTime();
+    timeValue = document.getElementById('timePicker').value;
+    let newNode = document.createElement('div');
+    newNode.setAttribute('id', 'a' + thisID);
+    newNode.classList.add('suggestedDate');
+  
+    let newButton = document.createElement('button');
+    newButton.setAttribute('id', 'd' + thisID);
+    newButton.classList.add('date');
+    let thisDate = new Date(dateValue.replace(/-/g, ','));
+    let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+    ' kl ' + timeValue;
+    let textNode = document.createTextNode(dateText);
+    newButton.appendChild(textNode);
+    newNode.appendChild(newButton);
+
+    let deleteButton = document.createElement('button');
+    deleteButton.setAttribute('id', 'x' + thisID)
+    deleteButton.classList.add('deleteButton');
+    let myText = '\u00D7';
+    let deleteTextNode = document.createTextNode(myText)
+    deleteButton.appendChild(deleteTextNode);
+
+    newNode.appendChild(deleteButton);
+
+    document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
+    // document.getElementById('newDates').insertAdjacentElement('beforeend', deleteButton );
+  }
+}
+
+function newDateHasBeenClicked(event) {
+  let thisDateID = event.target.id;
+  if (thisDateID.substring(0,1) === 'x') {
+    let currentElement = document.getElementById('a' + thisDateID.replace('x', ''));
+    while (currentElement.hasChildNodes()) {
+      currentElement.removeChild(currentElement.firstChild);
+    }
+  }
 }
 
 
 function sendToServerAndUpdateLocalStorage() {
+
 }
 
 
@@ -264,3 +308,6 @@ function debugExample(hash) {
     currentEvent = new Event('abc', 'Dronninglund Nye Brætspilsklub', ['Ada', 'Adam', 'Amanda'], suggestedDateList);
   }
 }
+
+
+function sayRap() {console.log('Rap')}

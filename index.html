@@ -131,7 +131,20 @@
           <p> Giv begivenden et navn </p>
           <input id="eventName" type="text">
         </div>
-        <button id="suggestEventDate" type="button" class="actionButton"> Foreslå dato </button>
+        <br>
+        <h3> Foreslå dato </h3>
+        <label for="datePicker"> Vælg dato </label>
+        <input id="datePicker" type="date" name="datePicker" value="">
+
+        <label for="timePicker"> Vælg tid </label>
+        <input id="timePicker" type="time" name="timePicker" value="12:00">
+
+        <button id="suggestEventDate" type="button" class="actionButton"> Tilføj datoforslag </button>
+
+        <div id="newDates"> 
+          <!-- Suggested dates are shown here -->
+        </div>
+        <!-- <input type="submit" value="Foreslå dato"> -->
         <br>
         <button id="makeEvent"> Opret begivend </button>
     </div>
