@@ -31,10 +31,18 @@ let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
 let debugVar1;
 
 
+document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
+document.getElementById('pris').addEventListener('click', function(event) {unfold(event); }, true);
+document.getElementById('cookies').addEventListener('click', function(event) {unfold(event); }, true);
+
 document.getElementById('inviteOthers').addEventListener('click', inviteOthers);
+
 document.getElementById('dates').addEventListener('click', function(event) { dateHasBeenClicked(event); }, true);
+
 document.getElementById('suggestDate').addEventListener('click', suggestDate);
+
 document.getElementById('newEvent').addEventListener('click', newDateSuggestion);
+document.getElementById('makeYourOwnEvent').addEventListener('click', newDateSuggestion);
 
 
 class Event {
@@ -78,13 +86,7 @@ class Datesuggestion {
 
 // Runs when the page is loaded:
 function setUpFunc() {
-  debugExample();
-
   checkLocalStorageAndChooseWelcome();
-
-  getMyEventsFromServer();
-
-  fillInDates();
 }
 
 
@@ -92,9 +94,23 @@ function checkLocalStorageAndChooseWelcome() {
   if (localStorage.eventsIFollow) {
     eventsIFollow = localStorage.eventsIFollow;
     myID = localStorage.myID;
+    
+    document.getElementById('Frontpage').hidden = true;
+    document.getElementById('dateContainer').hidden = false;
+    
+    getMyEventsFromServer();
+    
+    fillInDates();
+  } else {
+    document.getElementById('Frontpage').hidden = false;
+    document.getElementById('dateContainer').hidden = true;
   }
 }
 
+
+function getMyEventsFromServer() {
+  debugExample();  // ToDo: Fix real function
+}
 
 function fillInDates() {
   for (const [index, dateSuggestion] of suggestedDateList.entries()) {
@@ -142,6 +158,12 @@ function fillInDates() {
 function inviteOthers() {
 }
 
+
+function unfold(event) {  // Toggle button visibility
+  let buttonID = event.target.id;
+
+  document.getElementById(buttonID + 'Text').hidden = !(document.getElementById(buttonID + 'Text').hidden);
+}
 
 function dateHasBeenClicked(event) {
     let myDateID = event.target.id;
