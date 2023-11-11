@@ -42,7 +42,7 @@ document.getElementById('dates').addEventListener('click', function(event) { dat
 // document.getElementById('suggestDate').addEventListener('click', suggestDate);
 document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
 document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
-// document.getElementById('datePicker').addEventListener('change', suggestDate)
+document.getElementById('makeEvent').addEventListener('click', makeEvent)
 // document.getElementById('timePicker').addEventListener('change', suggestDate)
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
@@ -50,9 +50,10 @@ document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSu
 
 
 class Event {
-  constructor(eventID, eventName, participants, suggestedDateList) {
+  constructor(eventID, eventName, location, participants, suggestedDateList) {
     this.eventID = eventID;
     this.eventName = eventName;
+    this.location = location;
     this.participants = participants;
     this.suggestedDateList = suggestedDateList;
   }
@@ -173,7 +174,7 @@ function inviteOthers() {
 }
 
 
-function unfold(event) {  // Toggle button visibility
+function unfold(event) {  // Toggle button visibility on Frontpage
   let buttonID = event.target.id;
   
   document.getElementById(buttonID + 'Text').hidden = !(document.getElementById(buttonID + 'Text').hidden);
@@ -229,28 +230,49 @@ function dateHasBeenClicked(event) {
 
 
 
-function newEventSuggestion() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
+function newEventSuggestion() {
   document.getElementById('frontPage').hidden = true;
   document.getElementById('newEventContainer').hidden = false;
+}
+
+
+function makeEvent() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
+  let name = document.getElementById('eventName').value;
+  if (name && suggestedDateList) {
+    let thisID = new Date().getTime();
+    let eventName = document.getElementById('eventName').value;
+    let location = document.getElementById('location').value;
+    location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
+    let thisEvent = new Event(thisID, eventName, location, [], suggestedDateList);
+    eventsIFollow.push(thisEvent);
   
-  makeHash();
-  readName();
-  sendToServerAndUpdateLocalStorage();
-}
+    sendToServerAndUpdateLocalStorage();
 
-function makeHash() {
-}
+    document.getElementById('newEventContainer').hidden = true;
+    document.getElementById('dateContainer').hidden = false;  // ToDo: Update dateContainer-view to show all events and move the invite-others-button to each event
+  } else {
+    alert('Tilføj datoforslag og navn før du opretter en begivenhed')
+  }
 
 
-function readName() {
 }
 
 
 function suggestDate() {
-  dateValue = document.getElementById('datePicker').value;
+  let dateValue = document.getElementById('datePicker').value;
   if (dateValue) {
-    thisID = new Date().getTime();
-    timeValue = document.getElementById('timePicker').value;
+    let thisID = new Date().getTime();
+    let thisDate = new Date(dateValue.replace(/-/g, ','));
+    let dateText = '';
+    let timeValue = document.getElementById('timePicker').value;
+    let thisTime = new Date(0, 0, 0, timeValue.split(':')[0], timeValue.split(':')[1])
+    let location = document.getElementById('location').value;
+    location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
+
+    suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
+      thisTime.getHours(), thisTime.getMinutes()), location, []));
+    console.log(suggestedDateList);
+
     let newNode = document.createElement('div');
     newNode.setAttribute('id', 'a' + thisID);
     newNode.classList.add('suggestedDate');
@@ -258,9 +280,15 @@ function suggestDate() {
     let newButton = document.createElement('button');
     newButton.setAttribute('id', 'd' + thisID);
     newButton.classList.add('date');
-    let thisDate = new Date(dateValue.replace(/-/g, ','));
-    let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
-    ' kl ' + timeValue;
+    if (location) {
+        dateText = location + ',   ' + 
+        weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+        ' kl ' + timeValue;
+      } else {
+        dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+          ' kl ' + timeValue;
+      }
+    
     let textNode = document.createTextNode(dateText);
     newButton.appendChild(textNode);
     newNode.appendChild(newButton);
@@ -275,7 +303,6 @@ function suggestDate() {
     newNode.appendChild(deleteButton);
 
     document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
-    // document.getElementById('newDates').insertAdjacentElement('beforeend', deleteButton );
   }
 }
 
