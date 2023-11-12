@@ -23,6 +23,7 @@
 let userID = '';
 let eventID = '';
 let myID = '';
+let changeHasOccured = false;
 let eventsIFollow = [];
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let suggestedDateList = [];
@@ -43,7 +44,11 @@ document.getElementById('dates').addEventListener('click', function(event) { dat
 document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
 document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
 document.getElementById('makeEvent').addEventListener('click', makeEvent)
-// document.getElementById('timePicker').addEventListener('change', suggestDate)
+
+
+document.getElementById('datePicker').addEventListener('change', function() { changeHasOccured = true; })
+document.getElementById('timePicker').addEventListener('change', function() { changeHasOccured = true; })
+document.getElementById('location').addEventListener('change', function() { changeHasOccured = true; })
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
 document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
@@ -91,6 +96,9 @@ class Datesuggestion {
   
   // Runs when the page is loaded:
   function setUpFunc() {
+    document.getElementById('datePicker').value = '';
+    document.getElementById('timePicker').value = '12:00';
+    document.getElementById('location').value = '';
     checkLocalStorageAndChooseWelcome();
 }
 
@@ -260,17 +268,24 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
 
 function suggestDate() {
   let dateValue = document.getElementById('datePicker').value;
-  if (dateValue) {
-    let thisID = new Date().getTime();
-    let thisDate = new Date(dateValue.replace(/-/g, ','));
-    let dateText = '';
+  if (dateValue && changeHasOccured) {
+    let now = new Date();
+    
     let timeValue = document.getElementById('timePicker').value;
-    let thisTime = new Date(0, 0, 0, timeValue.split(':')[0], timeValue.split(':')[1])
+    let thisDate = new Date(dateValue.replace(/-/g, ',') + ' T ' + timeValue);
+    
+    if (thisDate < now) {
+      alert('Vælg en tidspunkt i fremtiden');
+      return;
+    }
+    
+    let thisID = new Date().getTime();
+    let dateText = '';
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
 
     suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
-      thisTime.getHours(), thisTime.getMinutes()), location, []));
+      thisDate.getHours(), thisDate.getMinutes()), location, []));
     console.log(suggestedDateList);
 
     let newNode = document.createElement('div');
@@ -303,6 +318,15 @@ function suggestDate() {
     newNode.appendChild(deleteButton);
 
     document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
+
+    changeHasOccured = false;
+  } else {
+    if (!dateValue) {
+      alert('Vælg en dato\n\n... Og overvej at sætte et nyt tidspunkt')
+    } else {
+      alert('Der skal vælges en ny dato, tid eller sted for at tilføje et nyt datoforslag')
+    }
+      
   }
 }
 
