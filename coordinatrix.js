@@ -31,6 +31,8 @@ let suggestedDateList = [];
 let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
 let currentEvent;
 
+// ToDo: Empty suggestedDateList when making new event? And set currentEvent
+
 
 document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
 document.getElementById('pris').addEventListener('click', function(event) {unfold(event); }, true);
@@ -96,11 +98,17 @@ class Datesuggestion {
   
   // Runs when the page is loaded:
   function setUpFunc() {
+    resetEvent();
+    checkLocalStorageAndChooseWelcome();
+  }
+  
+
+  function resetEvent() {
+    document.getElementById('eventName').value = '';
     document.getElementById('datePicker').value = '';
     document.getElementById('timePicker').value = '12:00';
     document.getElementById('location').value = '';
-    checkLocalStorageAndChooseWelcome();
-}
+  }
 
 
 function checkLocalStorageAndChooseWelcome() {
@@ -213,8 +221,8 @@ function dateHasBeenClicked(event) {
   
   
   function showParticipants(myDateID) {
-    if (document.getElementById('part' + myDateID).hasChildNodes()) {
-      let element = document.getElementById('part' + myDateID);
+    let element = document.getElementById('part' + myDateID);
+    if (element.hasChildNodes()) {
       while (element.hasChildNodes()) {
         element.removeChild(element.firstChild);
       }
@@ -239,7 +247,9 @@ function dateHasBeenClicked(event) {
 
 
 function newEventSuggestion() {
+  resetEvent();  // Set the value of date and place to '' and the value of time to 12:00
   document.getElementById('frontPage').hidden = true;
+  document.getElementById('dateContainer').hidden = true;
   document.getElementById('newEventContainer').hidden = false;
 }
 
@@ -256,17 +266,27 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
   
     sendToServerAndUpdateLocalStorage();
 
+    let element = document.getElementById('newDates');
+    if (element.hasChildNodes()) {
+      while (element.hasChildNodes()) {
+        element.removeChild(element.firstChild);
+      }
+    }
+
     document.getElementById('newEventContainer').hidden = true;
     document.getElementById('dateContainer').hidden = false;  // ToDo: Update dateContainer-view to show all events and move the invite-others-button to each event
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
   }
-
-
 }
 
 
-function suggestDate() {
+function suggestDate() {  // ToDo: Check if the date is in current year. If not, add full year to button showing suggestion
+  if (document.getElementById('eventName').value === '') {
+    alert('Giv begivenheden et navn');
+    return;
+  }
+
   let dateValue = document.getElementById('datePicker').value;
   if (dateValue && changeHasOccured) {
     let now = new Date();
