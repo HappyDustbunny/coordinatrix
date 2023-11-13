@@ -20,16 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
+
 let userID = '';
 let eventID = '';
 let myID = '';
 let changeHasOccured = false;
-let eventsIFollow = [];
 let uniqueIdList = []; // Used by the class DateSuggestion only
-let suggestedDateList = [];
-
-let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
 let currentEvent;
+let suggestedDateList = [];
+let listOfEventsIFollow = [];
+
 
 // ToDo: Empty suggestedDateList when making new event? And set currentEvent
 
@@ -112,8 +113,8 @@ class Datesuggestion {
 
 
 function checkLocalStorageAndChooseWelcome() {
-  if (location.hash || localStorage.eventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
-    eventsIFollow = localStorage.eventsIFollow;
+  if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
+    listOfEventsIFollow = localStorage.listOfEventsIFollow;
     myID = localStorage.myID;
     
     document.getElementById('frontPage').hidden = true;
@@ -262,7 +263,9 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
     let thisEvent = new Event(thisID, eventName, location, [], suggestedDateList);
-    eventsIFollow.push(thisEvent);
+    currentEvent = thisEvent;
+    listOfEventsIFollow.push(thisEvent);
+    localStorage.listOfEventsIFollow = listOfEventsIFollow;
   
     sendToServerAndUpdateLocalStorage();
 
@@ -275,6 +278,7 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
 
     document.getElementById('newEventContainer').hidden = true;
     document.getElementById('dateContainer').hidden = false;  // ToDo: Update dateContainer-view to show all events and move the invite-others-button to each event
+    fillInDates();
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
   }
