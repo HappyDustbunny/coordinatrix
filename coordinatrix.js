@@ -33,6 +33,7 @@ let listOfEventsIFollow = [];
 
 
 // ToDo: Empty suggestedDateList when making new event? And set currentEvent
+// ToDo: Allow deletion of events by owner
 
 
 document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
@@ -114,17 +115,17 @@ class Datesuggestion {
 
 function checkLocalStorageAndChooseWelcome() {
   if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
-    listOfEventsIFollow = localStorage.listOfEventsIFollow;
+    listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow);
     myID = localStorage.myID;
     
-    document.getElementById('frontPage').hidden = true;
+    document.getElementById('frontpageDiv').hidden = true;
     document.getElementById('dateContainer').hidden = false;
     
     getMyEventsFromServer(location.hash);
     
     fillInDates();
   } else {
-    document.getElementById('frontPage').hidden = false;
+    document.getElementById('frontpageDiv').hidden = false;
     document.getElementById('dateContainer').hidden = true;
   }
 }
@@ -249,7 +250,7 @@ function dateHasBeenClicked(event) {
 
 function newEventSuggestion() {
   resetEvent();  // Set the value of date and place to '' and the value of time to 12:00
-  document.getElementById('frontPage').hidden = true;
+  document.getElementById('frontpageDiv').hidden = true;
   document.getElementById('dateContainer').hidden = true;
   document.getElementById('newEventContainer').hidden = false;
 }
@@ -265,7 +266,7 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
     let thisEvent = new Event(thisID, eventName, location, [], suggestedDateList);
     currentEvent = thisEvent;
     listOfEventsIFollow.push(thisEvent);
-    localStorage.listOfEventsIFollow = listOfEventsIFollow;
+    localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
   
     sendToServerAndUpdateLocalStorage();
 

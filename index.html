@@ -55,113 +55,118 @@
     <script src="coordinatrix.js" defer></script>
 
     <link rel="manifest" href="manifest.json">
+
+    <script>
+      /*to prevent Firefox FOUC, this must be here*/
+      let FF_FOUC_FIX;
+    </script>
   </head>
 
-  <body onload="setUpFunc()">
-    <div class="headContainer">
-        <h1> Coordinatrix </h1>
-    </div>
+  <body onload="setUpFunc()">    
+    <div id="pageContainer">
+      <div id="headContainer">
+          <h1> Coordinatrix </h1>
+      </div>
 
-    <div id="frontPage">
-        <div id='frontpageContainer' class="frontpageContainer">
-          <div id='frontpageDiv'>
-            <h3> Velkommen til Coordinatrix </h3>
-              
-            <button id="newEvent" type="button" class="actionButton">Opret ny begivenhed</button>
-            <br>
-            <br>
-            <br>
-
-            <div>
-                <p> Coordinatrix hjælper dig med at koordinere begivenheder indenfor en gruppe. </p> 
-                <button id="howToUse"> Hvordan bruges Coordinatrix? &#x25BC; </button> <!-- Triangle on apex -->
-                <div id="howToUseText" hidden>
-                  <p> Opret en ny begivenhed ved at trykke på knappen nederst. <br>
-                      Du vil blive bedt om </p>
-                  <ul>
-                      <p> Et navn til begivenheden </p>
-                      <p> Et navn der identificerer dig overfor gruppen ("tag") </p>
-                  </ul>
-                  <p> Herefter bliver du ført over på en side hvor du kan se dine åbne begivenheder, 
-                      tilføje forslag til datoer og invitere deltagere </p>
-                      <h5> BEMÆRK! </h5>
-                      <p> Begivenheder fjernes automatisk fra Coordinatrix server, når den sidst foreslåede dato er overskredet med to dage. </p>
-                      <p> Begivenheder der er er blevet fjernet kan <em>ikke</em> genskabes. </p>
-                      <p> Der gives ingen garanti for fortsat service, så begivenheder kan forsvinde uden varsel. <br>
-                          Det er dog næppe sandsynligt, da jeg har betalt for serverplads indtil ~2032 </p>
-                      <p> Inviteded deltagere vil kunne tilføje forslag til datoer og markere om de kan deltage på de foreslåede datoer. </p>
-                </div>
-                <button id="pris"> Pris: Gratis &#x25BC; </button> <!-- Triangle on apex -->
-                <div id="prisText" hidden>
-                  <p> Coordinatrix er gratis at bruge, så længe værktøjet ikke bliver så populært, at det genererer voldsom trafik. <br>
-                      Det er et værktøj jeg har lavet til mig selv, og det koster ikke mig noget at andre bruger det, så længe det ikke bliver misbrugt eller bliver voldsomt populært.
-                      <br>
-                      Bliver det voldsomt populært vil jeg throttle trafikken eller lukke siden, men fortvivl ikke: <br>
-                      Du kan finde kildekoden på Github under en MIT licens, så hvis du har lyst til at køre din egen server med Coordinatrix er det bare at gå amok &#128512; </p> <!-- :-D Smiley -->
-                </div>
-                <button id="cookies"> Cookies og datahåndtering: Kun funktionelle, ingen deling &#x25BC; </button> <!-- Triangle on apex -->
-                <div id="cookiesText" hidden>
-                  <p> Der vil blive lagt en smule data på din computer/telefon som identificerer dig 
-                      når du tilgår Coordinatrix. <br>
-                      Det drejer sig om navnet på begivenheden og dit tag <br>
-                      Det er nødvendigt for at du kan se de begivenheder, du er interesseret i. <br> 
-                      Disse data deles kun med den server Coordinatrix ligger på og med andre som har fået et link til begivenheden. </p>
-                </div>
+      <div id='frontpageDiv'>
+        <h3> Velkommen til Coordinatrix </h3>
+          
+        <button id="newEvent" type="button" class="actionButton">Opret ny begivenhed</button>
+        <br>
+        <br>
+        <br>
+  
+        <div>
+            <p> Coordinatrix hjælper dig med at koordinere begivenheder indenfor en gruppe. </p> 
+            <button id="howToUse" class="unfoldTextButton"> Hvordan bruges Coordinatrix? &#x25BC; </button> <!-- Triangle on apex -->
+            <div id="howToUseText" hidden>
+              <p> Opret en ny begivenhed ved at trykke på knappen nederst. <br>
+                  Du vil blive bedt om </p>
+              <ul>
+                  <p> Et navn til begivenheden </p>
+                  <p> Et navn der identificerer dig overfor gruppen ("tag") </p>
+              </ul>
+              <p> Herefter bliver du ført over på en side hvor du kan se dine åbne begivenheder, 
+                  tilføje forslag til datoer og invitere deltagere </p>
+                  <h5> BEMÆRK! </h5>
+                  <p> Begivenheder fjernes automatisk fra Coordinatrix server, når den sidst foreslåede dato er overskredet med to dage. </p>
+                  <p> Begivenheder der er er blevet fjernet kan <em>ikke</em> genskabes. </p>
+                  <p> Der gives ingen garanti for fortsat service, så begivenheder kan forsvinde uden varsel. <br>
+                      Det er dog næppe sandsynligt, da jeg har betalt for serverplads indtil ~2032 </p>
+                  <p> Inviteded deltagere vil kunne tilføje forslag til datoer og markere om de kan deltage på de foreslåede datoer. </p>
             </div>
-          </div>
+            
+            <button id="pris" class="unfoldTextButton"> Pris: Gratis &#x25BC; </button> <!-- Triangle on apex -->
+            <div id="prisText" hidden>
+              <p> Coordinatrix er gratis at bruge, så længe værktøjet ikke bliver så populært, at det genererer voldsom trafik. <br>
+                  Det er et værktøj jeg har lavet til mig selv, og det koster ikke mig noget at andre bruger det, så længe det ikke bliver misbrugt eller bliver voldsomt populært.
+                  <br>
+                  Bliver det voldsomt populært vil jeg throttle trafikken eller lukke siden, men fortvivl ikke: <br>
+                  Du kan finde kildekoden på Github under en MIT licens, så hvis du har lyst til at køre din egen server med Coordinatrix er det bare at gå amok &#128512; </p> <!-- :-D Smiley -->
+            </div>
+            
+            <button id="cookies" class="unfoldTextButton"> Cookies og datahåndtering: Kun funktionelle, ingen deling &#x25BC; </button> <!-- Triangle on apex -->
+            <div id="cookiesText" hidden>
+              <p> Der vil blive lagt en smule data på din computer/telefon som identificerer dig 
+                  når du tilgår Coordinatrix. <br>
+                  Det drejer sig om navnet på begivenheden og dit tag <br>
+                  Det er nødvendigt for at du kan se de begivenheder, du er interesseret i. <br> 
+                  Disse data deles kun med den server Coordinatrix ligger på og med andre som har fået et link til begivenheden. </p>
+            </div>
         </div>
-    </div>
-    
-    <div id="dateContainer" hidden>
-      <h3 id="dateHeader"> </h3>
-      <button id="inviteOthers" type="button" class="actionButton">Inviter andre til denne begivenhed</button>
-      <br>
-      <p> Foreslåede datoer (Klik dato for at se tilmeldte) </p>
-      <div id="dates">
+      </div>
+  
+      
+      <div id="dateContainer" hidden>
+        <h3 id="dateHeader"> </h3>
+        <button id="inviteOthers" type="button" class="actionButton">Inviter andre til denne begivenhed</button>
+        <br>
+        <p> Foreslåede datoer (Klik dato for at se tilmeldte) </p>
+        <div id="dates">
+            <!-- Suggested dates are shown here -->
+        </div>
+        <br>
+        <button id="suggestDate" type="button" class="actionButton"> Foreslå dato </button>
+        <button id="makeYourOwnEvent" type="button" class="actionButton"> Lav ny event </button>
+      </div>
+      
+      <div id="newEventContainer" hidden>
+        <h3> Opret ny begivenhed </h3>
+        <div>
+          <p> Giv begivenden et navn </p>
+          <input id="eventName" type="text">
+        </div>
+        <br>
+        
+        <h3> Foreslå dato og sted </h3>
+  
+        <div>
+          <label for="datePicker"> Vælg dato </label>
+          <input id="datePicker" type="date" name="datePicker" value="">
+  
+          <label for="timePicker"> Vælg tid </label>
+          <input id="timePicker" type="time" name="timePicker" value="12:00">
+  
+        </div>
+        
+        <div>
+          <span> Sted </span>
+          <input id="location" type="text" placeholder="(Sted kan udelades)">
+          <br>
+          <br>
+          <button id="suggestEventDate" type="button" class="actionButton"> Tilføj datoforslag </button>
+          <br>
+          <br>
+        </div>
+  
+        <div id="newDates"> 
           <!-- Suggested dates are shown here -->
+        </div>
+        <!-- <input type="submit" value="Foreslå dato"> -->
+        <br>
+        <button id="makeEvent" type='button' class="actionButton"> Opret begivenhed </button>
       </div>
-      <br>
-      <button id="suggestDate" type="button" class="actionButton"> Foreslå dato </button>
-      <button id="makeYourOwnEvent" type="button" class="actionButton"> Lav ny event </button>
     </div>
-    
-    <div id="newEventContainer" hidden>
-      <h3> Opret ny begivenhed </h3>
-      <div>
-        <p> Giv begivenden et navn </p>
-        <input id="eventName" type="text">
-      </div>
-      <br>
-      
-      <h3> Foreslå dato og sted </h3>
 
-      <div>
-        <label for="datePicker"> Vælg dato </label>
-        <input id="datePicker" type="date" name="datePicker" value="">
-
-        <label for="timePicker"> Vælg tid </label>
-        <input id="timePicker" type="time" name="timePicker" value="12:00">
-
-      </div>
-
-      <!-- <h3> Foreslå sted </h3> -->
-      
-      <div>
-        <span> Sted </span>
-        <input id="location" type="text" placeholder="(Sted kan udelades)">
-        <br>
-        <br>
-        <button id="suggestEventDate" type="button" class="actionButton"> Tilføj datoforslag </button>
-        <br>
-        <br>
-      </div>
-
-      <div id="newDates"> 
-        <!-- Suggested dates are shown here -->
-      </div>
-      <!-- <input type="submit" value="Foreslå dato"> -->
-      <br>
-      <button id="makeEvent"> Opret begivenhed </button>
-    </div>
 
   </body>
