@@ -115,18 +115,20 @@ class Datesuggestion {
 
 function checkLocalStorageAndChooseWelcome() {
   if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
-    listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow);
+    listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow) ;
     myID = localStorage.myID;
     
     document.getElementById('frontpageDiv').hidden = true;
+    document.getElementById('eventSelectorDiv').hidden = true;
     document.getElementById('dateContainer').hidden = false;
     
     getMyEventsFromServer(location.hash);
     
     fillInDates();
   } else {
+    // fdocument.getElementById('dateContainer').hidden = true;
+    document.getElementById('eventSelectorDiv').hidden = true;
     document.getElementById('frontpageDiv').hidden = false;
-    document.getElementById('dateContainer').hidden = true;
   }
 }
 
@@ -136,6 +138,18 @@ function getMyEventsFromServer(hash) {
 }
 
 function fillInDates() {
+  if (1 < listOfEventsIFollow.length) {
+    document.getElementById('eventSelectorDiv').hidden = false;
+    for (const [index, eventIFollow] of listOfEventsIFollow.entries()) {
+      let newNode = document.createElement('option');
+      newNode.name = eventIFollow.eventName;
+      newNode.setAttribute('id', eventIFollow.eventID);
+      let textNode = document.createTextNode(eventIFollow.eventName);
+      newNode.appendChild(textNode);
+      document.getElementById('eventSelector').insertAdjacentElement('beforeend', newNode);
+    }
+  }
+
   // Insert eventname as header
   let headerText = document.createTextNode(currentEvent.eventName);
   document.getElementById('dateHeader').appendChild(headerText);
@@ -251,7 +265,8 @@ function dateHasBeenClicked(event) {
 function newEventSuggestion() {
   resetEvent();  // Set the value of date and place to '' and the value of time to 12:00
   document.getElementById('frontpageDiv').hidden = true;
-  document.getElementById('dateContainer').hidden = true;
+  //document.getElementById('dateContainer').hidden = true;
+  document.getElementById('eventSelectorDiv').hidden = true;
   document.getElementById('newEventContainer').hidden = false;
 }
 
@@ -278,7 +293,8 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
     }
 
     document.getElementById('newEventContainer').hidden = true;
-    document.getElementById('dateContainer').hidden = false;  // ToDo: Update dateContainer-view to show all events and move the invite-others-button to each event
+    document.getElementById('eventSelectorDiv').hidden = true;
+    document.getElementById('dateContainer').hidden = false;  // ToDo: Update eventContainer-view to show all events and move the invite-others-button to each event
     fillInDates();
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
