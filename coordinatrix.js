@@ -35,6 +35,7 @@ let listOfEventsIFollow = [];
 // ToDo: Empty suggestedDateList when making new event? And set currentEvent
 // ToDo: Allow deletion of events by owner
 
+document.getElementById('lookAtEvents').addEventListener('click', lookAtEvents);
 
 document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
 document.getElementById('pris').addEventListener('click', function(event) {unfold(event); }, true);
@@ -71,70 +72,89 @@ class Event {
 
 class Datesuggestion {
   constructor(date, location, participants) {
-        this.date = date;
-        this.location = location;
-        this.participants = participants;
-        this.uniqueID = this.giveAUniqueId();
-      }
+    this.date = date;
+    this.location = location;
+    this.participants = participants;
+    this.uniqueID = this.giveAUniqueId();
+  }
 
-    giveAUniqueId() {
-      let tryAgain = false;
-      let uniqueId = 0;
-      do {
-        tryAgain = false;
-        uniqueId = Math.floor(Math.random() * 100000);
-        for (const [index, id] of uniqueIdList.entries()) {
-          if (uniqueId.toString() === id.toString()) {
-            tryAgain = true;
-            break;
-          }
+  giveAUniqueId() {
+    let tryAgain = false;
+    let uniqueId = 0;
+    do {
+      tryAgain = false;
+      uniqueId = Math.floor(Math.random() * 100000);
+      for (const [index, id] of uniqueIdList.entries()) {
+        if (uniqueId.toString() === id.toString()) {
+          tryAgain = true;
+          break;
         }
       }
-      while (tryAgain);
-      
-      uniqueIdList.push(uniqueId);
-      return uniqueId;
     }
+    while (tryAgain);
+    
+    uniqueIdList.push(uniqueId);
+    return uniqueId;
   }
+}
 
-  
-  // Runs when the page is loaded:
-  function setUpFunc() {
-    resetEvent();
-    checkLocalStorageAndChooseWelcome();
-  }
-  
 
-  function resetEvent() {
-    document.getElementById('eventName').value = '';
-    document.getElementById('datePicker').value = '';
-    document.getElementById('timePicker').value = '12:00';
-    document.getElementById('location').value = '';
-  }
+// Runs when the page is loaded:
+function setUpFunc() {
+  resetEvent();
+  checkLocalStorageAndChooseWelcome();
+}
+
+
+function lookAtEvents() {
+  hideAll();
+  document.getElementById('dateContainer').hidden = true;
+}
+
+
+function hideAll() {
+  document.getElementById('frontpageDiv').hidden = true;
+  document.getElementById('eventSelectorDiv').hidden = true;
+  document.getElementById('dateContainer').hidden = true;
+  document.getElementById('eventSelectorDiv').hidden = true;
+}
+
+
+function resetEvent() {
+  document.getElementById('eventName').value = '';
+  document.getElementById('datePicker').value = '';
+  document.getElementById('timePicker').value = '12:00';
+  document.getElementById('location').value = '';
+}
 
 
 function checkLocalStorageAndChooseWelcome() {
-  if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
-    listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow) ;
-    myID = localStorage.myID;
-    
-    document.getElementById('frontpageDiv').hidden = true;
-    document.getElementById('eventSelectorDiv').hidden = true;
-    document.getElementById('dateContainer').hidden = false;
-    
-    getMyEventsFromServer(location.hash);
-    
-    fillInDates();
+if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
+  listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow) ;
+  myID = localStorage.myID;
+  
+  hideAll();
+  document.getElementById('dateContainer').hidden = false;
+  
+  getMyEventsFromServer(location.hash);
+  
+  fillInDates();
   } else {
-    // fdocument.getElementById('dateContainer').hidden = true;
-    document.getElementById('eventSelectorDiv').hidden = true;
+    hideAll();
     document.getElementById('frontpageDiv').hidden = false;
   }
 }
 
 
 function getMyEventsFromServer(hash) {
-  debugExample(hash);  // ToDo: Fix real function
+  // debugExample(hash);  // ToDo: Fix real function
+  for (const [index, eventIFollow] of listOfEventsIFollow.entries()) {
+    if (listOfEventsIFollow[index].eventID === Number(hash.replace('#', ''))) {
+      currentEvent = listOfEventsIFollow[index];
+    } else {
+      currentEvent = listOfEventsIFollow[0];
+    }
+  }
 }
 
 function fillInDates() {
@@ -152,7 +172,12 @@ function fillInDates() {
 
   // Insert eventname as header
   let headerText = document.createTextNode(currentEvent.eventName);
-  document.getElementById('dateHeader').appendChild(headerText);
+  let element = document.getElementById('dateHeader');
+  stripChilds(element);
+  // while (element.hasChildNodes()) {
+  //   element.removeChild(element.firstChild);
+  // }
+  element.appendChild(headerText);
   
   // Fill in dates and participants
   for (const [index, dateSuggestion] of suggestedDateList.entries()) {
@@ -234,14 +259,18 @@ function dateHasBeenClicked(event) {
       showParticipants(myDateID);
     }
   }
+
+  function stripChilds(element) {
+    while (element.hasChildNodes()) {
+      element.removeChild(element.firstChild);
+    }
+  }
   
   
   function showParticipants(myDateID) {
     let element = document.getElementById('part' + myDateID);
     if (element.hasChildNodes()) {
-      while (element.hasChildNodes()) {
-        element.removeChild(element.firstChild);
-      }
+      stripChilds(element);
     } else {
       for (const [index, dateSuggestion] of suggestedDateList.entries()) {
       if (dateSuggestion.uniqueID === Number(myDateID)) {
@@ -264,9 +293,7 @@ function dateHasBeenClicked(event) {
 
 function newEventSuggestion() {
   resetEvent();  // Set the value of date and place to '' and the value of time to 12:00
-  document.getElementById('frontpageDiv').hidden = true;
-  //document.getElementById('dateContainer').hidden = true;
-  document.getElementById('eventSelectorDiv').hidden = true;
+  hideAll();
   document.getElementById('newEventContainer').hidden = false;
 }
 
@@ -292,9 +319,8 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
       }
     }
 
-    document.getElementById('newEventContainer').hidden = true;
-    document.getElementById('eventSelectorDiv').hidden = true;
-    document.getElementById('dateContainer').hidden = false;  // ToDo: Update eventContainer-view to show all events and move the invite-others-button to each event
+    hideAll();
+    document.getElementById('dateContainer').hidden = false; 
     fillInDates();
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
