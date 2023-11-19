@@ -29,7 +29,7 @@ let changeHasOccured = false;
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let currentEvent;
 let suggestedDateList = [];
-let listOfEventsIFollow = [];
+let listOfEventsIFollow = {};
 
 
 // ToDo: Empty suggestedDateList when making new event? And set currentEvent
@@ -55,7 +55,7 @@ document.getElementById('datePicker').addEventListener('change', function() { ch
 document.getElementById('timePicker').addEventListener('change', function() { changeHasOccured = true; });
 document.getElementById('location').addEventListener('change', function() { changeHasOccured = true; });
 
-document.getElementById('eventSelector').addEventListener('change', showDifferentEvent);
+document.getElementById('eventSelector').addEventListener('change', function() { showDifferentEvent(event); });
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
 document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
@@ -116,9 +116,9 @@ function lookAtEvents() {
 
 function hideAll() {
   document.getElementById('frontpageDiv').hidden = true;
-  document.getElementById('eventSelectorDiv').hidden = true;
   document.getElementById('dateContainer').hidden = true;
   document.getElementById('eventSelectorDiv').hidden = true;
+  document.getElementById('newEventContainer').hidden = true;
 }
 
 
@@ -140,7 +140,7 @@ if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this b
   
   getMyEventsFromServer(location.hash);
   
-  fillInDates();
+  fillInEvents();
   } else {
     hideAll();
     document.getElementById('frontpageDiv').hidden = false;
@@ -150,19 +150,21 @@ if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this b
 
 function getMyEventsFromServer(hash) {
   // debugExample(hash);  // ToDo: Fix real function
-  for (const [index, eventIFollow] of listOfEventsIFollow.entries()) {
-    if (listOfEventsIFollow[index].eventID === Number(hash.replace('#', ''))) {
+  for (const [index, eventIFollow] of Object.entries(listOfEventsIFollow)) {
+    if (index === 'ID' + Number(hash.replace('#', ''))) {
       currentEvent = listOfEventsIFollow[index];
-    } else {
-      currentEvent = listOfEventsIFollow[0];
+    } else {  // Chose the first random entry in the dictionary
+      let myKeys = [];
+      Object.entries(listOfEventsIFollow).forEach(key => myKeys.push(key[0]));
+      currentEvent = listOfEventsIFollow[myKeys[0]];
     }
   }
 }
 
-function fillInDates() {
-  if (1 < listOfEventsIFollow.length) {
+function fillInEvents() {
+  if (1 < Object.keys(listOfEventsIFollow).length) {
     document.getElementById('eventSelectorDiv').hidden = false;
-    for (const [index, eventIFollow] of listOfEventsIFollow.entries()) {
+    for (const [index, eventIFollow] of Object.entries(listOfEventsIFollow)) {
       let newNode = document.createElement('option');
       newNode.name = eventIFollow.eventName;
       newNode.setAttribute('id', eventIFollow.eventID);
@@ -171,6 +173,12 @@ function fillInDates() {
       document.getElementById('eventSelector').insertAdjacentElement('beforeend', newNode);
     }
   }
+
+  fillInDates();
+}
+
+
+function fillInDates() {
 
   // Insert eventname as header
   let headerText = document.createTextNode(currentEvent.eventName);
@@ -182,7 +190,7 @@ function fillInDates() {
   element.appendChild(headerText);
   
   // Fill in dates and participants
-  for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+  for (const [index, dateSuggestion] of currentEvent['suggestedDateList'].entries()) {
     let newNode = document.createElement('div');
     newNode.classList.add('suggestedDate');
     
@@ -190,7 +198,7 @@ function fillInDates() {
     newButton.setAttribute('id', dateSuggestion.uniqueID);
     newButton.classList.add('date');
     
-    let thisDate = dateSuggestion.date;
+    let thisDate = new Date(dateSuggestion.date);
     let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
     ' kl ' + thisDate.getHours();
     let textNode = document.createTextNode(dateText);
@@ -292,8 +300,11 @@ function dateHasBeenClicked(event) {
 }
 
 
-function showDifferentEvent() {
+function showDifferentEvent(event) {
   console.log(document.getElementById('eventSelector').value);
+  console.log(event.currentTarget.selectedOptions[0].id);
+  currentEvent = listOfEventsIFollow[event.currentTarget.selectedOptions[0].id];
+  fillInDates();
 }
 
 
@@ -308,13 +319,13 @@ function newEventSuggestion() {
 function makeEvent() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
   let name = document.getElementById('eventName').value;
   if (name && suggestedDateList) {
-    let thisID = new Date().getTime();
+    let thisID = 'ID' + new Date().getTime();
     let eventName = document.getElementById('eventName').value;
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
     let thisEvent = new Event(thisID, eventName, location, [], suggestedDateList);
     currentEvent = thisEvent;
-    listOfEventsIFollow.push(thisEvent);
+    listOfEventsIFollow[thisID] = thisEvent;
     localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
   
     sendToServerAndUpdateLocalStorage();
@@ -328,7 +339,7 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
 
     hideAll();
     document.getElementById('dateContainer').hidden = false; 
-    fillInDates();
+    fillInEvents();
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
   }
