@@ -190,6 +190,8 @@ function fillInDates() {
   element.appendChild(headerText);
   
   // Fill in dates and participants
+  stripChilds(document.getElementById('dates'));
+
   for (const [index, dateSuggestion] of currentEvent['suggestedDateList'].entries()) {
     let newNode = document.createElement('div');
     newNode.classList.add('suggestedDate');
