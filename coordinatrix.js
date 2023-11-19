@@ -45,7 +45,6 @@ document.getElementById('inviteOthers').addEventListener('click', inviteOthers);
 
 document.getElementById('dates').addEventListener('click', function(event) { dateHasBeenClicked(event); }, true);
 
-// document.getElementById('suggestDate').addEventListener('click', suggestDate);
 document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
 document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
 document.getElementById('makeEvent').addEventListener('click', makeEvent);
@@ -254,7 +253,7 @@ function dateHasBeenClicked(event) {
   console.log(myDateID);
   let firstCharInID = myDateID.substring(0, 1);
   if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
-    for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+    for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
   if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
     dateSuggestion.participants = 'Yes';
     document.getElementById(myDateID).style.backgroundColor = 'green';
@@ -284,7 +283,7 @@ function dateHasBeenClicked(event) {
     if (element.hasChildNodes()) {
       stripChilds(element);
     } else {
-      for (const [index, dateSuggestion] of suggestedDateList.entries()) {
+      for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
       if (dateSuggestion.uniqueID === Number(myDateID)) {
         let myParticipantList = dateSuggestion.participants;
         for (const [index, participant] of myParticipantList.entries()) {
@@ -340,6 +339,7 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
     }
 
     hideAll();
+    suggestedDateList = [];
     document.getElementById('dateContainer').hidden = false; 
     fillInEvents();
   } else {
