@@ -35,6 +35,7 @@ let listOfEventsIFollow = {};
 // ToDo: Empty suggestedDateList when making new event? And set currentEvent
 // ToDo: Allow deletion of events by owner
 
+document.getElementById('whoami').addEventListener('click', whoami);
 document.getElementById('lookAtEvents').addEventListener('click', lookAtEvents);
 
 document.getElementById('howToUse').addEventListener('click', function(event) {unfold(event); }, true);
@@ -102,14 +103,27 @@ class Datesuggestion {
 
 // Runs when the page is loaded:
 function setUpFunc() {
+  document.getElementById('lookAtEvents').disabled = true;
+  document.getElementById('newEvent').disabled = true;
   resetEvent();
   checkLocalStorageAndChooseWelcome();
 }
 
 
+function whoami() {
+  document.getElementById('lookAtEvents').disabled = false;
+  document.getElementById('newEvent').disabled = false;
+  myID = document.getElementById('myID').value;
+  myID = myID.replace(/[^a-zA-Z0-9 ]/g, '');
+  document.getElementById('myID').value = myID;
+  localStorage.myID = myID;
+}
+
+
 function lookAtEvents() {
   hideAll();
-  document.getElementById('dateContainer').hidden = true;
+  document.getElementById('dateContainer').hidden = false;
+  fillInEvents();
 }
 
 
@@ -126,6 +140,7 @@ function resetEvent() {
   document.getElementById('datePicker').value = '';
   document.getElementById('timePicker').value = '12:00';
   document.getElementById('location').value = '';
+  document.getElementById('makeEvent').disabled = true;
 }
 
 
@@ -254,13 +269,16 @@ function dateHasBeenClicked(event) {
   let firstCharInID = myDateID.substring(0, 1);
   if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
     for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
-  if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
-    dateSuggestion.participants = 'Yes';
-    document.getElementById(myDateID).style.backgroundColor = 'green';
+        if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
+          dateSuggestion.participants.push(myID);
+          document.getElementById(myDateID).style.backgroundColor = 'green';
           document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
-          dateSuggestion.participants = 'No';
+          let index = dateSuggestion.participants.indexOf(myID);
+          if (-1 < index) {
+            dateSuggestion.participants.splice(index, 1);
+          }
           document.getElementById(myDateID).style.backgroundColor = 'red';
           document.getElementById('y' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
           console.log('No');
@@ -319,6 +337,7 @@ function newEventSuggestion() {
 
 function makeEvent() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
   let name = document.getElementById('eventName').value;
+  name = name.replace(/[^a-zA-Z0-9 ]/g, '');
   if (name && suggestedDateList) {
     let thisID = 'ID' + new Date().getTime();
     let eventName = document.getElementById('eventName').value;
@@ -407,6 +426,8 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
     document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
 
     changeHasOccured = false;
+
+    document.getElementById('makeEvent').disabled = false;
   } else {
     if (!dateValue) {
       alert('Vælg en dato\n\n... Og overvej at sætte et nyt tidspunkt')

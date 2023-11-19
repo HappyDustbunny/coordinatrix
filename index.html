@@ -70,26 +70,24 @@
 
       <div id='frontpageDiv'>
         <h3> Velkommen til Coordinatrix </h3>
-          
-        <button id="lookAtEvents" type="button" class="actionButton">Se dine begivenhed</button>
 
-        <button id="newEvent" type="button" class="actionButton">Opret ny begivenhed</button>
-        <br>
-        <br>
-        <br>
-  
         <div>
-            <p> Coordinatrix hjælper dig med at koordinere begivenheder indenfor en gruppe. </p> 
+          <p> Coordinatrix hjælper dig med at koordinere begivenheder indenfor en gruppe. </p>
+            <label for="myID"> Vælg et <em>tag</em> der kan identificere dig overfor gruppen </label>
+            <input id="myID" type="text"> 
+            <button id="whoami" type="button" class="actionButton">Bekræft dit <em>tag</em> (Navn)</button>
+            <br><br>
+            <button id="lookAtEvents" type="button" class="actionButton" disabled>Se dine begivenheder</button>
+            
+            <button id="newEvent" type="button" class="actionButton" disabled>Opret ny begivenhed</button>
+            <br><br>
+            <br>
             <button id="howToUse" class="unfoldTextButton"> Hvordan bruges Coordinatrix? &#x25BC; </button> <!-- Triangle on apex -->
             <div id="howToUseText" hidden>
-              <p> Opret en ny begivenhed ved at trykke på knappen nederst. <br>
-                  Du vil blive bedt om </p>
-              <ul>
-                  <p> Et navn til begivenheden </p>
-                  <p> Et navn der identificerer dig overfor gruppen ("tag") </p>
-              </ul>
-              <p> Herefter bliver du ført over på en side hvor du kan se dine åbne begivenheder, 
-                  tilføje forslag til datoer og invitere deltagere </p>
+              <p> Start med at give et navn der identificerer dig overfor gruppen ("tag")</p>
+              <p> Opret en ny begivenhed ved at trykke på knappen nederst. </p>
+              <p> Herefter bliver du ført over på en side hvor du kan se dine åbne begivenheder, du vil blive bedt om et navn til 
+                  begivenheden og om at tilføje forslag til datoer og invitere deltagere </p>
                   <h5> BEMÆRK! </h5>
                   <p> Begivenheder fjernes automatisk fra Coordinatrix server, når den sidst foreslåede dato er overskredet med to dage. </p>
                   <p> Begivenheder der er er blevet fjernet kan <em>ikke</em> genskabes. </p>
@@ -141,8 +139,8 @@
       <div id="newEventContainer" hidden>
         <h3> Opret ny begivenhed </h3>
         <div>
-          <p> Giv begivenden et navn </p>
-          <input id="eventName" type="text">
+          <label for="eventName"> Giv begivenden et navn </label>
+          <input id="eventName" type="text" name="eventName">
         </div>
         <br>
         
@@ -172,7 +170,7 @@
         </div>
         <!-- <input type="submit" value="Foreslå dato"> -->
         <br>
-        <button id="makeEvent" type='button' class="actionButton"> Opret begivenhed </button>
+        <button id="makeEvent" type='button' class="actionButton" disabled> Opret begivenhed </button>
       </div>
     </div>
 
