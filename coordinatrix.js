@@ -48,12 +48,14 @@ document.getElementById('dates').addEventListener('click', function(event) { dat
 // document.getElementById('suggestDate').addEventListener('click', suggestDate);
 document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
 document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
-document.getElementById('makeEvent').addEventListener('click', makeEvent)
+document.getElementById('makeEvent').addEventListener('click', makeEvent);
 
 
-document.getElementById('datePicker').addEventListener('change', function() { changeHasOccured = true; })
-document.getElementById('timePicker').addEventListener('change', function() { changeHasOccured = true; })
-document.getElementById('location').addEventListener('change', function() { changeHasOccured = true; })
+document.getElementById('datePicker').addEventListener('change', function() { changeHasOccured = true; });
+document.getElementById('timePicker').addEventListener('change', function() { changeHasOccured = true; });
+document.getElementById('location').addEventListener('change', function() { changeHasOccured = true; });
+
+document.getElementById('eventSelector').addEventListener('change', showDifferentEvent);
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
 document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
@@ -287,6 +289,11 @@ function dateHasBeenClicked(event) {
       }
     }
   }
+}
+
+
+function showDifferentEvent() {
+  console.log(document.getElementById('eventSelector').value);
 }
 
 
