@@ -25,6 +25,7 @@ let weekDays = ['Søn', 'Man', 'Tirs', 'Ons', 'Tors', 'Fre', 'Lør'];
 let userID = '';
 let eventID = '';
 let myID = '';
+let myIDName = '';
 let changeHasOccured = false;
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let currentEvent;
@@ -113,10 +114,19 @@ function setUpFunc() {
 function whoami() {
   document.getElementById('lookAtEvents').disabled = false;
   document.getElementById('newEvent').disabled = false;
-  myID = document.getElementById('myID').value;
-  myID = myID.replace(/[^a-zA-Z0-9 ]/g, '');
-  document.getElementById('myID').value = myID;
-  localStorage.myID = myID;
+  let myIDNameElement = document.getElementById('myIDName');
+  if (localStorage.myID === undefined) {  // Using a new browser on a device creates one unique ID (myID) and asks for a possible tag-change prompting last used name
+    myID = new Date().getTime();
+    localStorage.myID = myID;
+    myIDName = localStorage.myIDName;
+    myIDNameElement.value = myIDName;
+  } else {
+    myID = localStorage.myID;
+  }
+  myIDName = document.getElementById('myIDName').value;
+  myIDName = myIDName.replace(/[^a-zA-Z0-9 ]/g, '');
+  myIDNameElement.value = myIDName;
+  localStorage.myIDName = myIDName;
 }
 
 
@@ -147,7 +157,7 @@ function resetEvent() {
 function checkLocalStorageAndChooseWelcome() {
 if (location.hash || localStorage.listOfEventsIFollow) {  // ToDo: Should this be two checks? Or is last check superflous?
   listOfEventsIFollow = JSON.parse(localStorage.listOfEventsIFollow) ;
-  myID = localStorage.myID;
+  myIDName = localStorage.myIDName;
   
   hideAll();
   document.getElementById('dateContainer').hidden = false;
@@ -270,12 +280,12 @@ function dateHasBeenClicked(event) {
   if (isNaN(firstCharInID)) {  // If not date button (I.e. Yes or No button)
     for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
         if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
-          dateSuggestion.participants.push(myID);
+          dateSuggestion.participants.push(myIDName);
           document.getElementById(myDateID).style.backgroundColor = 'green';
           document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
-          let index = dateSuggestion.participants.indexOf(myID);
+          let index = dateSuggestion.participants.indexOf(myIDName);
           if (-1 < index) {
             dateSuggestion.participants.splice(index, 1);
           }
