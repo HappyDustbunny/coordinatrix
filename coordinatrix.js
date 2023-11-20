@@ -305,11 +305,16 @@ function dateHasBeenClicked(event) {
           document.getElementById(myDateID).classList.add('red');
           document.getElementById('y' + myDateID.substring(1, 10)).classList.remove('green');
           console.log('No');
+          // Remove current user from open participantslists
+          let partElement = document.getElementById('part' + myDateID.substring(1)); 
+          if (partElement.hasChildNodes) {
+            stripChilds(partElement);
+            showParticipants(myDateID.substring(1));
+          }
         }
     }
 
     localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
-    // TODO: Close participantlist when pressing a Deltager/Deltager ikke button - or remove/add participation dynamically
   }  else {
     showParticipants(myDateID);
   }
