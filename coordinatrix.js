@@ -56,7 +56,7 @@ document.getElementById('datePicker').addEventListener('change', function() { ch
 document.getElementById('timePicker').addEventListener('change', function() { changeHasOccured = true; });
 document.getElementById('location').addEventListener('change', function() { changeHasOccured = true; });
 
-document.getElementById('eventSelector').addEventListener('change', function() { showDifferentEvent(event); });
+document.getElementById('eventSelector').addEventListener('change', function(event) { showDifferentEvent(event); });
 
 document.getElementById('newEvent').addEventListener('click', newEventSuggestion);
 document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSuggestion);
@@ -219,9 +219,6 @@ function fillInDates() {
   let headerText = document.createTextNode(currentEvent.eventName);
   let element = document.getElementById('dateHeader');
   stripChilds(element);
-  // while (element.hasChildNodes()) {
-  //   element.removeChild(element.firstChild);
-  // }
   element.appendChild(headerText);
   
   // Fill in dates and participants
@@ -244,21 +241,21 @@ function fillInDates() {
     
     let noButton = document.createElement('button');
     noButton.setAttribute('id', 'n' + dateSuggestion.uniqueID);
-    noButton.classList.add('red');
+    noButton.classList.add('lightRed');
+    if (dateSuggestion.nonparticipants.includes(myIDName)) {
+      noButton.classList.add('red');
+    }
     noButton.classList.add(dateSuggestion.uniqueID);
     let yesText = document.createTextNode('Deltager ikke');
     noButton.appendChild(yesText);
     newNode.appendChild(noButton);
     
-    // let maybeButton = document.createElement('button');
-    // maybeButton.classList.add('yellow');
-    // let maybeText = document.createTextNode('Kan måske');
-    // maybeButton.appendChild(maybeText);
-    // newNode.appendChild(maybeButton);
-    
     let yesButton = document.createElement('button');
     yesButton.setAttribute('id', 'y' + dateSuggestion.uniqueID);
-    yesButton.classList.add('green');
+    yesButton.classList.add('lightGreen');
+    if (dateSuggestion.participants.includes(myIDName)) {
+      yesButton.classList.add('green');
+    }
     yesButton.classList.add(dateSuggestion.uniqueID);
     let noText = document.createTextNode('Deltager');
     yesButton.appendChild(noText);
@@ -296,8 +293,8 @@ function dateHasBeenClicked(event) {
           if (-1 < index) {
             dateSuggestion.nonparticipants.splice(index, 1);
           }
-          document.getElementById(myDateID).style.backgroundColor = 'green';
-          document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+          document.getElementById(myDateID).classList.add('green');
+          document.getElementById('n' + myDateID.substring(1, 10)).classList.remove('red');
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
           dateSuggestion.nonparticipants.push(myIDName);
@@ -305,29 +302,32 @@ function dateHasBeenClicked(event) {
           if (-1 < index) {
             dateSuggestion.participants.splice(index, 1);
           }
-          document.getElementById(myDateID).style.backgroundColor = 'red';
-          document.getElementById('y' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+          document.getElementById(myDateID).classList.add('red');
+          document.getElementById('y' + myDateID.substring(1, 10)).classList.remove('green');
           console.log('No');
         }
-      }
-    }  else {
-      showParticipants(myDateID);
     }
-  }
 
-  function stripChilds(element) {
-    while (element.hasChildNodes()) {
-      element.removeChild(element.firstChild);
-    }
+    localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
+    // TODO: Close participantlist when pressing a Deltager/Deltager ikke button - or remove/add participation dynamically
+  }  else {
+    showParticipants(myDateID);
   }
+}
+
+function stripChilds(element) {
+  while (element.hasChildNodes()) {
+    element.removeChild(element.firstChild);
+  }
+}
   
   
-  function showParticipants(myDateID) {
-    let element = document.getElementById('part' + myDateID);
-    if (element.hasChildNodes()) {
-      stripChilds(element);
-    } else {
-      for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
+function showParticipants(myDateID) {
+  let element = document.getElementById('part' + myDateID);
+  if (element.hasChildNodes()) {
+    stripChilds(element);
+  } else {
+    for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
       if (dateSuggestion.uniqueID === Number(myDateID)) {
         let myParticipantList = dateSuggestion.participants;
         for (const [index, participant] of myParticipantList.entries()) {
