@@ -199,13 +199,17 @@ function getMyEventsFromServer(hash) {
 function fillInEvents() {
   if (1 < Object.keys(listOfEventsIFollow).length) {
     document.getElementById('eventSelectorDiv').hidden = false;
+
+    let eventSelectorElement = document.getElementById('eventSelector');
+    stripChilds(eventSelectorElement);
+
     for (const [index, eventIFollow] of Object.entries(listOfEventsIFollow)) {
       let newNode = document.createElement('option');
       newNode.name = eventIFollow.eventName;
       newNode.setAttribute('id', eventIFollow.eventID);
       let textNode = document.createTextNode(eventIFollow.eventName);
       newNode.appendChild(textNode);
-      document.getElementById('eventSelector').insertAdjacentElement('beforeend', newNode);
+      eventSelectorElement.insertAdjacentElement('beforeend', newNode);
     }
   }
 
@@ -234,7 +238,10 @@ function fillInDates() {
     
     let thisDate = new Date(dateSuggestion.date);
     let dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
-    ' kl ' + thisDate.getHours();
+    ' kl ' + thisDate.getHours() + ':' + ("00" + thisDate.getMinutes()).slice(-2);
+    if (dateSuggestion.location) {
+      dateText = dateSuggestion.location + ', ' + dateText;
+    }
     let textNode = document.createTextNode(dateText);
     newButton.appendChild(textNode);
     newNode.appendChild(newButton);
@@ -351,8 +358,8 @@ function showParticipants(myDateID) {
 
 
 function showDifferentEvent(event) {
-  console.log(document.getElementById('eventSelector').value);
-  console.log(event.currentTarget.selectedOptions[0].id);
+  // console.log(document.getElementById('eventSelector').value);
+  // console.log(event.currentTarget.selectedOptions[0].id);
   currentEvent = listOfEventsIFollow[event.currentTarget.selectedOptions[0].id];
   fillInDates();
 }
