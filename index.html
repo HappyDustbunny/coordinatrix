@@ -147,20 +147,23 @@
         </div>
         <br>
         
-        <h3> Foreslå dato og sted </h3>
-  
-        <div>
-          <label for="datePicker"> Vælg dato </label>
-          <input id="datePicker" type="date" name="datePicker" value="">
-  
-          <label for="timePicker"> Vælg tid </label>
-          <input id="timePicker" type="time" name="timePicker" value="12:00">
-  
+        <div id="dateAndPlaceSuggestorDiv">
+          <h3> Foreslå dato og sted </h3>
+    
+          <div>
+            <label for="datePicker"> Vælg dato </label>
+            <input id="datePicker" type="date" name="datePicker" value="">
+    
+            <label for="timePicker"> Vælg tid </label>
+            <input id="timePicker" type="time" name="timePicker" value="12:00">
+            <br>
+            <span> Sted </span>
+            <input id="location" type="text" placeholder="(Sted kan udelades)">
+          </div>
+          
         </div>
         
         <div>
-          <span> Sted </span>
-          <input id="location" type="text" placeholder="(Sted kan udelades)">
           <br>
           <br>
           <button id="suggestEventDate" type="button" class="actionButton"> Tilføj datoforslag </button>
