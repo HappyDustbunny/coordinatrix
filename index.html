@@ -77,23 +77,26 @@
             <input id="myIDName" type="text"> 
             <button id="whoami" type="button" class="actionButton">Bekræft dit <em>tag</em> (Navn)</button>
             <br><br>
-            <button id="lookAtEvents" type="button" class="actionButton" disabled>Se dine begivenheder</button>
+            <button id="lookAtEvents" type="button" class="actionButton">Se dine begivenheder</button>
             
-            <button id="newEvent" type="button" class="actionButton" disabled>Opret ny begivenhed</button>
+            <button id="newEvent" type="button" class="actionButton">Opret ny begivenhed</button>
             <br><br>
             <br>
             <button id="howToUse" class="unfoldTextButton"> Hvordan bruges Coordinatrix? &#x25BC; </button> <!-- Triangle on apex -->
             <div id="howToUseText" hidden>
-              <p> Start med at give et navn der identificerer dig overfor gruppen ("tag")</p>
-              <p> Opret en ny begivenhed ved at trykke på knappen nederst. </p>
-              <p> Herefter bliver du ført over på en side hvor du kan se dine åbne begivenheder, du vil blive bedt om et navn til 
-                  begivenheden og om at tilføje forslag til datoer og invitere deltagere </p>
-                  <h5> BEMÆRK! </h5>
-                  <p> Begivenheder fjernes automatisk fra Coordinatrix server, når den sidst foreslåede dato er overskredet med to dage. </p>
-                  <p> Begivenheder der er er blevet fjernet kan <em>ikke</em> genskabes. </p>
-                  <p> Der gives ingen garanti for fortsat service, så begivenheder kan forsvinde uden varsel. <br>
-                      Det er dog næppe sandsynligt, da jeg har betalt for serverplads indtil ~2032 </p>
-                  <p> Inviteded deltagere vil kunne tilføje forslag til datoer og markere om de kan deltage på de foreslåede datoer. </p>
+              <p> Start med at skrive et navn der identificerer dig overfor gruppen ("tag")</p>
+              <p> Du kan nu se de begivenheder du er inviteret til eller har oprettet, eller du kan oprette 
+                en ny begivenhed ved at trykke på knapperne nederst. </p>
+              <p> Herefter bliver du enten ført over på en side hvor du kan se dine åbne begivenheder, eller 
+                du vil blive bedt om et navn til en ny begivenhed og om at tilføje forslag til datoer. </p>
+              <p> Når du opretter begivenheden føres du over på en side hvor du kan tilmelde dig selv 
+                og invitere andre til begivenheden. </p>
+              <h5> BEMÆRK! </h5>
+              <p> Begivenheder fjernes automatisk fra Coordinatrix server, når den sidst foreslåede dato er overskredet med to dage. </p>
+              <p> Begivenheder der er er blevet fjernet kan <em>ikke</em> genskabes. </p>
+              <p> Der gives ingen garanti for fortsat service, så begivenheder kan forsvinde uden varsel. <br>
+                  Det er dog næppe sandsynligt, da jeg har betalt for serverplads indtil ~2032 </p>
+              <p> Inviteded deltagere vil kunne tilføje forslag til datoer og markere om de kan deltage på de foreslåede datoer. </p>
             </div>
             
             <button id="pris" class="unfoldTextButton"> Pris: Gratis &#x25BC; </button> <!-- Triangle on apex -->
@@ -101,7 +104,7 @@
               <p> Coordinatrix er gratis at bruge, så længe værktøjet ikke bliver så populært, at det genererer voldsom trafik. <br>
                   Det er et værktøj jeg har lavet til mig selv, og det koster ikke mig noget at andre bruger det, så længe det ikke bliver misbrugt eller bliver voldsomt populært.
                   <br>
-                  Bliver det voldsomt populært vil jeg throttle trafikken eller lukke siden, men fortvivl ikke: <br>
+                  Bliver det voldsomt populært vil jeg nok throttle trafikken eller lukke siden, men fortvivl ikke: <br>
                   Du kan finde kildekoden på Github under en MIT licens, så hvis du har lyst til at køre din egen server med Coordinatrix er det bare at gå amok &#128512; </p> <!-- :-D Smiley -->
             </div>
             
@@ -109,7 +112,7 @@
             <div id="cookiesText" hidden>
               <p> Der vil blive lagt en smule data på din computer/telefon som identificerer dig 
                   når du tilgår Coordinatrix. <br>
-                  Det drejer sig om navnet på begivenheden og dit tag <br>
+                  Det drejer sig om navnet på begivenheden(/erne), dit tag, din unikke ID og dine tilmeldinger. <br>
                   Det er nødvendigt for at du kan se de begivenheder, du er interesseret i. <br> 
                   Disse data deles kun med den server Coordinatrix ligger på og med andre som har fået et link til begivenheden. </p>
             </div>

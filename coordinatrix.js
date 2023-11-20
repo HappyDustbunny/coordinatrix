@@ -104,29 +104,41 @@ class Datesuggestion {
 
 // Runs when the page is loaded:
 function setUpFunc() {
-  document.getElementById('lookAtEvents').disabled = true;
-  document.getElementById('newEvent').disabled = true;
+  if (localStorage.myIDName === undefined) {
+    document.getElementById('lookAtEvents').disabled = true;
+    document.getElementById('newEvent').disabled = true;
+  } else {
+    document.getElementById('myIDName').value = localStorage.myIDName;
+    document.getElementById('lookAtEvents').disabled = false;
+    document.getElementById('newEvent').disabled = false;
+  }
   resetEvent();
   checkLocalStorageAndChooseWelcome();
 }
 
 
 function whoami() {
-  document.getElementById('lookAtEvents').disabled = false;
-  document.getElementById('newEvent').disabled = false;
   let myIDNameElement = document.getElementById('myIDName');
-  if (localStorage.myID === undefined) {  // Using a new browser on a device creates one unique ID (myID) and asks for a possible tag-change prompting last used name
-    myID = new Date().getTime();
-    localStorage.myID = myID;
-    myIDName = localStorage.myIDName;
+
+  if (2 < myIDNameElement.value.length) {
+    myIDName = myIDNameElement.value;
+    myIDName = myIDName.replace(/[^a-zA-Z0-9 æøåÆØÅ]/g, '');
     myIDNameElement.value = myIDName;
+    localStorage.myIDName = myIDName;
+    
+    if (localStorage.myID === undefined) {  // Using a new browser on a device creates one unique ID (myID) and asks for a possible tag-change prompting last used name
+      myID = myIDName.substring(0, 2).trim() + new Date().getTime(); // The ID will randomly contain the first two characters of the first chosen tag. Trim will remove spaces, but that another dumbass starts his tag with a double space at the exact same microsecond is minuscule
+      localStorage.myID = myID;
+    } else {
+      myID = localStorage.myID;
+    }
+    
+    document.getElementById('lookAtEvents').disabled = false;
+    document.getElementById('newEvent').disabled = false;
+
   } else {
-    myID = localStorage.myID;
+    alert('Skriv venligst et tag (navn)\nBrug venligst kun bogstaver og tal\nog mindst tre karakterer')
   }
-  myIDName = document.getElementById('myIDName').value;
-  myIDName = myIDName.replace(/[^a-zA-Z0-9 ]/g, '');
-  myIDNameElement.value = myIDName;
-  localStorage.myIDName = myIDName;
 }
 
 
