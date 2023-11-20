@@ -63,21 +63,20 @@ document.getElementById('makeYourOwnEvent').addEventListener('click', newEventSu
 
 
 class Event {
-  constructor(eventID, eventName, location, participants, suggestedDateList) {
+  constructor(eventID, eventName, suggestedDateList) {
     this.eventID = eventID;
     this.eventName = eventName;
-    this.location = location;
-    this.participants = participants;
     this.suggestedDateList = suggestedDateList;
   }
 }
 
 
 class Datesuggestion {
-  constructor(date, location, participants) {
+  constructor(date, location, participants, nonparticipants) {
     this.date = date;
     this.location = location;
     this.participants = participants;
+    this.nonparticipants = nonparticipants;
     this.uniqueID = this.giveAUniqueId();
   }
 
@@ -293,10 +292,15 @@ function dateHasBeenClicked(event) {
     for (const [index, dateSuggestion] of currentEvent.suggestedDateList.entries()) {
         if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'y') {
           dateSuggestion.participants.push(myIDName);
+          let index = dateSuggestion.nonparticipants.indexOf(myIDName);
+          if (-1 < index) {
+            dateSuggestion.nonparticipants.splice(index, 1);
+          }
           document.getElementById(myDateID).style.backgroundColor = 'green';
           document.getElementById('n' + myDateID.substring(1, 10)).style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
           console.log('Yes');
         } else if (dateSuggestion.uniqueID === Number(myDateID.substring(1, 10)) && firstCharInID === 'n') {
+          dateSuggestion.nonparticipants.push(myIDName);
           let index = dateSuggestion.participants.indexOf(myIDName);
           if (-1 < index) {
             dateSuggestion.participants.splice(index, 1);
@@ -365,7 +369,7 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
     let eventName = document.getElementById('eventName').value;
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
-    let thisEvent = new Event(thisID, eventName, location, [], suggestedDateList);
+    let thisEvent = new Event(thisID, eventName, suggestedDateList);
     currentEvent = thisEvent;
     listOfEventsIFollow[thisID] = thisEvent;
     localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
@@ -413,7 +417,7 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
 
     suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
-      thisDate.getHours(), thisDate.getMinutes()), location, []));
+      thisDate.getHours(), thisDate.getMinutes()), location, [], []));
     console.log(suggestedDateList);
 
     let newNode = document.createElement('div');
@@ -480,13 +484,13 @@ function sendToServerAndUpdateLocalStorage() {
 
 function debugExample(hash) {
   if (hash === '#XYZ') {
-    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 10, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Kamilla', 'Knud']));
-    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 11, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Knud']));
-    currentEvent = new Event('XYZ', 'Dronninglund Brætspilsklub', ['Karen', 'Kurt', 'Kamilla', 'Knud'], suggestedDateList);
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 10, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Kamilla', 'Knud'], ['Børge', 'Birger']));
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 10, 11, 13, 0), 'Bøgevangen 42', ['Karen', 'Kurt', 'Knud'], ['Børge', 'Birger']));
+    currentEvent = new Event('XYZ', 'Dronninglund Brætspilsklub', suggestedDateList);
   } else {
-    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 8, 14, 0), 'Skovbrynet', ['Ada', 'Adam', 'Amanda']));
-    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 11, 14, 0), 'Skovbrynet', ['Adam', 'Amanda']));
-    currentEvent = new Event('abc', 'Dronninglund Nye Brætspilsklub', ['Ada', 'Adam', 'Amanda'], suggestedDateList);
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 8, 14, 0), 'Skovbrynet', ['Ada', 'Adam', 'Amanda'], ['Børge', 'Birger']));
+    suggestedDateList.push(new Datesuggestion(new Date(2023, 11, 11, 14, 0), 'Skovbrynet', ['Adam', 'Amanda'], ['Børge', 'Birger']));
+    currentEvent = new Event('abc', 'Dronninglund Nye Brætspilsklub', suggestedDateList);
   }
 }
 
