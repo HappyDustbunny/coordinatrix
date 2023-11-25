@@ -29,11 +29,10 @@ let myIDName = '';
 let changeHasOccured = false;
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let currentEvent;
-let suggestedDateList = [];
+// let suggestedDateList = [];
 let listOfEventsIFollow = {};
 
 
-// ToDo: Empty suggestedDateList when making new event? And set currentEvent
 // ToDo: Allow deletion of events by owner
 
 document.getElementById('whoami').addEventListener('click', whoami);
@@ -47,7 +46,8 @@ document.getElementById('inviteOthers').addEventListener('click', inviteOthers);
 
 document.getElementById('dates').addEventListener('click', function(event) { dateHasBeenClicked(event); }, true);
 
-document.getElementById('suggestEventDate').addEventListener('click', suggestDate);
+document.getElementById('suggestDate1').addEventListener('click', function() { toggleHideButtonsTo(true) });
+document.getElementById('suggestDate2').addEventListener('click', suggestDate);
 document.getElementById('newDates').addEventListener('click', function(event) { newDateHasBeenClicked(event); }, true);
 document.getElementById('makeEvent').addEventListener('click', makeEvent);
 
@@ -106,6 +106,10 @@ function setUpFunc() {
   if (localStorage.myIDName === undefined) {
     document.getElementById('lookAtEvents').disabled = true;
     document.getElementById('newEvent').disabled = true;
+  } else if (localStorage.listOfEventsIFollow === undefined) {
+    document.getElementById('myIDName').value = localStorage.myIDName;
+    document.getElementById('lookAtEvents').disabled = true;
+    document.getElementById('newEvent').disabled = false;
   } else {
     document.getElementById('myIDName').value = localStorage.myIDName;
     document.getElementById('lookAtEvents').disabled = false;
@@ -153,6 +157,8 @@ function hideAll() {
   document.getElementById('dateContainer').hidden = true;
   document.getElementById('eventSelectorDiv').hidden = true;
   document.getElementById('newEventContainer').hidden = true;
+  document.getElementById('dateAndPlaceSuggestorDiv').hidden = true;
+  document.getElementById('eventConfirmButtonDiv').hidden = true;
 }
 
 
@@ -162,6 +168,7 @@ function resetEvent() {
   document.getElementById('timePicker').value = '12:00';
   document.getElementById('location').value = '';
   document.getElementById('makeEvent').disabled = true;
+  document.getElementById('suggestDateAndEventButtonDiv').hidden = false;
 }
 
 
@@ -288,6 +295,7 @@ function unfold(event) {  // Toggle button visibility on Frontpage
   document.getElementById(buttonID + 'Text').hidden = !(document.getElementById(buttonID + 'Text').hidden);
 }
 
+
 function dateHasBeenClicked(event) {
   let myDateID = event.target.id;
   console.log(myDateID);
@@ -321,15 +329,17 @@ function dateHasBeenClicked(event) {
         }
     }
 
-    localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
+    sendToServerAndUpdateLocalStorage();
   }  else {
     showParticipants(myDateID);
   }
 }
 
 function stripChilds(element) {
-  while (element.hasChildNodes()) {
-    element.removeChild(element.firstChild);
+  if (element.hasChildNodes()) {
+    while (element.hasChildNodes()) {
+      element.removeChild(element.firstChild);
+    }
   }
 }
   
@@ -358,8 +368,6 @@ function showParticipants(myDateID) {
 
 
 function showDifferentEvent(event) {
-  // console.log(document.getElementById('eventSelector').value);
-  // console.log(event.currentTarget.selectedOptions[0].id);
   currentEvent = listOfEventsIFollow[event.currentTarget.selectedOptions[0].id];
   fillInDates();
 }
@@ -370,33 +378,37 @@ function newEventSuggestion() {
   resetEvent();  // Set the value of date and place to '' and the value of time to 12:00
   hideAll();
   document.getElementById('newEventContainer').hidden = false;
+  document.getElementById('eventConfirmButtonDiv').hidden = false;
+  toggleHideButtonsTo(true);
+
+  let dummyEvent = new Event('', '', []);
+  currentEvent = dummyEvent;
 }
 
 
 function makeEvent() {  // ToDo: Give options to allow participants to invite others OR propose new dates OR neither
+  if (document.getElementById('eventName').value === '') {
+    alert('Giv begivenheden et navn');
+    return;
+  }
+
   let name = document.getElementById('eventName').value;
   name = name.replace(/[^a-zA-Z0-9 ]/g, '');
-  if (name && suggestedDateList) {
+  if (name && currentEvent.suggestedDateList) {
     let thisID = 'ID' + new Date().getTime();
     let eventName = document.getElementById('eventName').value;
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
-    let thisEvent = new Event(thisID, eventName, suggestedDateList);
+    let thisEvent = new Event(thisID, eventName, currentEvent.suggestedDateList);
     currentEvent = thisEvent;
     listOfEventsIFollow[thisID] = thisEvent;
-    localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);
   
     sendToServerAndUpdateLocalStorage();
 
     let element = document.getElementById('newDates');
-    if (element.hasChildNodes()) {
-      while (element.hasChildNodes()) {
-        element.removeChild(element.firstChild);
-      }
-    }
+    stripChilds(element);
 
     hideAll();
-    suggestedDateList = [];
     document.getElementById('dateContainer').hidden = false; 
     fillInEvents();
   } else {
@@ -405,11 +417,13 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
 }
 
 
+function toggleHideButtonsTo(boolVal) {
+  document.getElementById('suggestDateAndEventButtonDiv').hidden = boolVal;
+  document.getElementById('dateAndPlaceSuggestorDiv').hidden = !boolVal;
+}
+
+
 function suggestDate() {  // ToDo: Check if the date is in current year. If not, add full year to button showing suggestion
-  if (document.getElementById('eventName').value === '') {
-    alert('Giv begivenheden et navn');
-    return;
-  }
 
   let dateValue = document.getElementById('datePicker').value;
   if (dateValue && changeHasOccured) {
@@ -428,9 +442,10 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
     let location = document.getElementById('location').value;
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
 
-    suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
+    currentEvent.suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
       thisDate.getHours(), thisDate.getMinutes()), location, [], []));
-    console.log(suggestedDateList);
+    sendToServerAndUpdateLocalStorage();
+    console.log(currentEvent.suggestedDateList);
 
     let newNode = document.createElement('div');
     newNode.setAttribute('id', 'a' + thisID);
@@ -465,7 +480,10 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
 
     changeHasOccured = false;
 
-    document.getElementById('makeEvent').disabled = false;
+    document.getElementById('makeEvent').disabled = false;  // ToDo: Should this be conditional?
+
+    toggleHideButtonsTo(false);
+    fillInDates();
   } else {
     if (!dateValue) {
       alert('Vælg en dato\n\n... Og overvej at sætte et nyt tidspunkt')
@@ -488,7 +506,7 @@ function newDateHasBeenClicked(event) {
 
 
 function sendToServerAndUpdateLocalStorage() {
-
+  localStorage.listOfEventsIFollow = JSON.stringify(listOfEventsIFollow);  // ToDo: Add removing dates an option(?)
 }
 
 

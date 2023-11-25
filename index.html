@@ -135,8 +135,10 @@
             <!-- Suggested dates are shown here -->
         </div>
         <br>
-        <button id="suggestDate" type="button" class="actionButton"> Foreslå dato </button>
-        <button id="makeYourOwnEvent" type="button" class="actionButton"> Lav ny event </button>
+        <div id="suggestDateAndEventButtonDiv">
+          <button id="suggestDate1" type="button" class="actionButton"> Foreslå dato </button>
+          <button id="makeYourOwnEvent" type="button" class="actionButton"> Lav ny event </button>
+        </div>
       </div>
       
       <div id="newEventContainer" hidden>
@@ -146,31 +148,31 @@
           <input id="eventName" type="text" name="eventName">
         </div>
         <br>
+      </div>
         
-        <div id="dateAndPlaceSuggestorDiv">
-          <h3> Foreslå dato og sted </h3>
-    
-          <div>
-            <label for="datePicker"> Vælg dato </label>
-            <input id="datePicker" type="date" name="datePicker" value="">
-    
-            <label for="timePicker"> Vælg tid </label>
-            <input id="timePicker" type="time" name="timePicker" value="12:00">
-            <br>
-            <span> Sted </span>
-            <input id="location" type="text" placeholder="(Sted kan udelades)">
-          </div>
-          
-        </div>
-        
-        <div>
-          <br>
-          <br>
-          <button id="suggestEventDate" type="button" class="actionButton"> Tilføj datoforslag </button>
-          <br>
-          <br>
-        </div>
+      <div id="dateAndPlaceSuggestorDiv">
+        <h3> Foreslå dato og sted </h3>
   
+        <div>
+          <label for="datePicker"> Vælg dato </label>
+          <input id="datePicker" type="date" name="datePicker" value="">
+  
+          <label for="timePicker"> Vælg tid </label>
+          <input id="timePicker" type="time" name="timePicker" value="12:00">
+          <br>
+          <span> Sted </span>
+          <input id="location" type="text" placeholder="(Sted kan udelades)">
+        </div>
+        
+        <br>
+        <br>
+        <button id="suggestDate2" type="button" class="actionButton"> Tilføj datoforslag </button>
+      </div>
+        
+      <div id="eventConfirmButtonDiv">
+          <br>
+          <br>
+        
         <div id="newDates"> 
           <!-- Suggested dates are shown here -->
         </div>
