@@ -136,8 +136,13 @@ function whoami() {
       myID = localStorage.myID;
     }
     
-    document.getElementById('lookAtEvents').disabled = false;
-    document.getElementById('newEvent').disabled = false;
+    if (localStorage.listOfEventsIFollow === undefined) {
+      document.getElementById('lookAtEvents').disabled = true;
+      document.getElementById('newEvent').disabled = false;
+    } else {
+      document.getElementById('lookAtEvents').disabled = false;
+      document.getElementById('newEvent').disabled = false;
+    }
 
   } else {
     alert('Skriv venligst et tag (navn)\nBrug venligst kun bogstaver og tal\nog mindst tre karakterer')
@@ -213,11 +218,13 @@ function fillInEvents() {
     for (const [index, eventIFollow] of Object.entries(listOfEventsIFollow)) {
       let newNode = document.createElement('option');
       newNode.name = eventIFollow.eventName;
-      newNode.setAttribute('id', eventIFollow.eventID);
+      newNode.setAttribute('value', eventIFollow.eventID);
       let textNode = document.createTextNode(eventIFollow.eventName);
       newNode.appendChild(textNode);
       eventSelectorElement.insertAdjacentElement('beforeend', newNode);
     }
+
+    eventSelectorElement.value = currentEvent.eventID;
   }
 
   fillInDates();
@@ -368,7 +375,7 @@ function showParticipants(myDateID) {
 
 
 function showDifferentEvent(event) {
-  currentEvent = listOfEventsIFollow[event.currentTarget.selectedOptions[0].id];
+  currentEvent = listOfEventsIFollow[event.currentTarget.selectedOptions[0].value];
   fillInDates();
 }
 
@@ -482,7 +489,8 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
 
     document.getElementById('makeEvent').disabled = false;  // ToDo: Should this be conditional?
 
-    toggleHideButtonsTo(false);
+    // toggleHideButtonsTo(false);
+    document.getElementById('suggestDateAndEventButtonDiv').hidden = false;
     fillInDates();
   } else {
     if (!dateValue) {
