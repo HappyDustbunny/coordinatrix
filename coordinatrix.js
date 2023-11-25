@@ -447,9 +447,10 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
     let thisID = new Date().getTime();
     let dateText = '';
     let location = document.getElementById('location').value;
+    location = location.replace(/[^a-zA-Z0-9 æøåÆØÅ]/g, '');
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
 
-    currentEvent.suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getDate(), thisDate.getDay(), 
+    currentEvent.suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate(), 
       thisDate.getHours(), thisDate.getMinutes()), location, [], []));
     sendToServerAndUpdateLocalStorage();
     console.log(currentEvent.suggestedDateList);
@@ -489,7 +490,7 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
 
     document.getElementById('makeEvent').disabled = false;  // ToDo: Should this be conditional?
 
-    // toggleHideButtonsTo(false);
+    // toggleHideButtonsTo(false);  ToDo: Make an if structure here for Event-adding or plain date-adding
     document.getElementById('suggestDateAndEventButtonDiv').hidden = false;
     fillInDates();
   } else {
