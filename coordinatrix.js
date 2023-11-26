@@ -27,6 +27,7 @@ let eventID = '';
 let myID = '';
 let myIDName = '';
 let changeHasOccured = false;
+let isMakingNewEvent = false;
 let uniqueIdList = []; // Used by the class DateSuggestion only
 let currentEvent;
 // let suggestedDateList = [];
@@ -102,7 +103,7 @@ class Datesuggestion {
 
 
 // Runs when the page is loaded:
-function setUpFunc() {
+function setUpFunc() {  // ToDo: Make a current event for line 239 to read if stuff goes wrong
   if (localStorage.myIDName === undefined) {
     document.getElementById('lookAtEvents').disabled = true;
     document.getElementById('newEvent').disabled = true;
@@ -168,8 +169,9 @@ function hideAll() {
 
 
 function resetEvent() {
+  let now = new Date();
   document.getElementById('eventName').value = '';
-  document.getElementById('datePicker').value = '';
+  document.getElementById('datePicker').value = now.toISOString().split('T')[0];
   document.getElementById('timePicker').value = '12:00';
   document.getElementById('location').value = '';
   document.getElementById('makeEvent').disabled = true;
@@ -208,7 +210,7 @@ function getMyEventsFromServer(hash) {
   }
 }
 
-function fillInEvents() {
+function fillInEvents() {  // ToDo: Sort after date and time
   if (1 < Object.keys(listOfEventsIFollow).length) {
     document.getElementById('eventSelectorDiv').hidden = false;
 
@@ -387,6 +389,7 @@ function newEventSuggestion() {
   document.getElementById('newEventContainer').hidden = false;
   document.getElementById('eventConfirmButtonDiv').hidden = false;
   toggleHideButtonsTo(true);
+  isMakingNewEvent = true;  // Necessary to be able to suggest more than one date
 
   let dummyEvent = new Event('', '', []);
   currentEvent = dummyEvent;
@@ -412,12 +415,15 @@ function makeEvent() {  // ToDo: Give options to allow participants to invite ot
   
     sendToServerAndUpdateLocalStorage();
 
-    let element = document.getElementById('newDates');
-    stripChilds(element);
+    stripChilds(document.getElementById('newDates'));
 
     hideAll();
+
     document.getElementById('dateContainer').hidden = false; 
+
     fillInEvents();
+
+    isMakingNewEvent = false;
   } else {
     alert('Tilføj datoforslag og navn før du opretter en begivenhed')
   }
@@ -444,55 +450,61 @@ function suggestDate() {  // ToDo: Check if the date is in current year. If not,
       return;
     }
     
-    let thisID = new Date().getTime();
-    let dateText = '';
     let location = document.getElementById('location').value;
     location = location.replace(/[^a-zA-Z0-9 æøåÆØÅ]/g, '');
     location = location.charAt(0).toUpperCase() + location.slice(1);  // Make first letter uppercase
-
-    currentEvent.suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate(), 
-      thisDate.getHours(), thisDate.getMinutes()), location, [], []));
-    sendToServerAndUpdateLocalStorage();
-    console.log(currentEvent.suggestedDateList);
-
-    let newNode = document.createElement('div');
-    newNode.setAttribute('id', 'a' + thisID);
-    newNode.classList.add('suggestedDate');
-  
-    let newButton = document.createElement('button');
-    newButton.setAttribute('id', 'd' + thisID);
-    newButton.classList.add('date');
-    if (location) {
-        dateText = location + ',   ' + 
-        weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
-        ' kl ' + timeValue;
-      } else {
-        dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
-          ' kl ' + timeValue;
-      }
     
-    let textNode = document.createTextNode(dateText);
-    newButton.appendChild(textNode);
-    newNode.appendChild(newButton);
+    currentEvent.suggestedDateList.push(new Datesuggestion(new Date(thisDate.getFullYear(), thisDate.getMonth(), thisDate.getDate(), 
+    thisDate.getHours(), thisDate.getMinutes()), location, [], []));
+    sendToServerAndUpdateLocalStorage();
+    if (isMakingNewEvent) {
 
-    let deleteButton = document.createElement('button');
-    deleteButton.setAttribute('id', 'x' + thisID)
-    deleteButton.classList.add('deleteButton');
-    let myText = '\u00D7';
-    let deleteTextNode = document.createTextNode(myText)
-    deleteButton.appendChild(deleteTextNode);
-
-    newNode.appendChild(deleteButton);
-
-    document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
-
+      let thisID = new Date().getTime();
+      let dateText = '';
+  
+      let newNode = document.createElement('div');
+      newNode.setAttribute('id', 'a' + thisID);
+      newNode.classList.add('suggestedDate');
+    
+      let newButton = document.createElement('button');
+      newButton.setAttribute('id', 'd' + thisID);
+      newButton.classList.add('date');
+      if (location) {
+          dateText = location + ',   ' + 
+          weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+          ' kl ' + timeValue;
+        } else {
+          dateText = weekDays[thisDate.getDay()] + ' ' + thisDate.getDate() + '/' + (thisDate.getMonth() + 1) + 
+            ' kl ' + timeValue;
+        }
+      
+      let textNode = document.createTextNode(dateText);
+      newButton.appendChild(textNode);
+      newNode.appendChild(newButton);
+  
+      let deleteButton = document.createElement('button');
+      deleteButton.setAttribute('id', 'x' + thisID)
+      deleteButton.classList.add('deleteButton');
+      let myText = '\u00D7';
+      let deleteTextNode = document.createTextNode(myText)
+      deleteButton.appendChild(deleteTextNode);
+  
+      newNode.appendChild(deleteButton);
+  
+      document.getElementById('newDates').insertAdjacentElement('beforeend', newNode);
+  
+      document.getElementById('makeEvent').disabled = false;  // ToDo: Should this be conditional?
+      
+      // toggleHideButtonsTo(false);  // ToDo: Make an if structure here for Event-adding or plain date-adding
+      document.getElementById('suggestDateAndEventButtonDiv').hidden = false;
+      // stripChilds(document.getElementById('newDates'));
+      
+    } else {
+      fillInDates();
+      toggleHideButtonsTo(false);
+    }
     changeHasOccured = false;
-
-    document.getElementById('makeEvent').disabled = false;  // ToDo: Should this be conditional?
-
-    // toggleHideButtonsTo(false);  ToDo: Make an if structure here for Event-adding or plain date-adding
-    document.getElementById('suggestDateAndEventButtonDiv').hidden = false;
-    fillInDates();
+    
   } else {
     if (!dateValue) {
       alert('Vælg en dato\n\n... Og overvej at sætte et nyt tidspunkt')
